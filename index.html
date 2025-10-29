@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:url" content="https://www.codetoweb.tech/">
+    <meta property="og:image" content="https://www.codetoweb.tech/og-image.jpg">
+    <meta property="twitter:image" content="https://www.codetoweb.tech/twitter-image.jpg">
+    <link rel="canonical" href="https://www.codetoweb.tech/">
+    <title>JundAlNabi - News</title>
+
+    <!-- Old iOS style -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="shortcut icon" href="logo/logo.png" type="image/x-icon">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="logo/logo.png" alt="jundalnabi">
+                <h1>JundAlNabi</h1>
+            </div>
+            <ul id="nav_bar">
+                <li><a href="#home">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="#marker">Marker</a></li>
+                <li><a href="#updates">Updates</a></li>
+            </ul>
+            <i id="menu_bar" class="fa-solid fa-ellipsis-vertical"></i>
+        </nav>
+    </header>
+
+    <main>
+        <div class="hero">
+            <h2>Latest News & Updates</h2>
+            <p>Stay informed with the latest stories and articles</p>
+        </div>
+
+        <div id="loading" class="loading">
+            <i class="fa-solid fa-spinner fa-spin"></i> Loading news...
+        </div>
+
+        <div id="newsContainer" class="news-container"></div>
+    </main>
+
+    <script src="script.js" type="module"></script>
+</body>
+</html>

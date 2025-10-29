@@ -1,0 +1,30 @@
+# robots.txt for JundAlNabi News
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /config/
+Disallow: /firebase/
+Disallow: /private/
+Disallow: /tmp/
+
+# Prevent duplicate or sensitive query indexing
+Disallow: /*?*
+
+# Sitemap for better crawling
+Sitemap: https://codetoweb.tech/sitemap.xml
+
+# Crawl-delay for fair server usage (optional)
+Crawl-delay: 5
+
+# Additional directives for specific bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Yandex
+Disallow: /
+
+# End of file

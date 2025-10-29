@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - JundAlNabi</title>
+    <link rel="stylesheet" href="admin-style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+    <!-- Login Section -->
+    <div id="loginSection" class="login-section">
+        <h2><i class="fa-solid fa-lock"></i> Admin Login</h2>
+        <div id="loginAlert"></div>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" required placeholder="admin@example.com">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required placeholder="Enter password">
+            </div>
+            <button type="submit" class="btn" style="width: 100%;">
+                <i class="fa-solid fa-sign-in-alt"></i> Login
+            </button>
+        </form>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="adminDashboard" class="admin-dashboard">
+        <header class="admin-header">
+            <h1><i class="fa-solid fa-shield-halved"></i> Admin Panel</h1>
+            <button id="logoutBtn" class="logout-btn">
+                <i class="fa-solid fa-sign-out-alt"></i> Logout
+            </button>
+        </header>
+
+        <div class="container">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fa-solid fa-newspaper"></i>
+                    <h3 id="totalNews">0</h3>
+                    <p>Total News</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-clock"></i>
+                    <h3 id="todayNews">0</h3>
+                    <p>Today's Posts</p>
+                </div>
+            </div>
+
+            <!-- Upload Form -->
+            <div class="form-section">
+                <h2><i class="fa-solid fa-plus-circle"></i> Upload New Article</h2>
+                <div id="uploadAlert"></div>
+
+                <!-- Writing Guidelines -->
+                <div class="guidelines-box">
+                    <h3><i class="fa-solid fa-info-circle"></i> Article Writing Guidelines</h3>
+                    <ul>
+                        <li>Start with a short, clear title (max 70 characters).</li>
+                        <li>Keep your introduction short — 2 to 3 lines.</li>
+                        <li>Use <b>Bold</b> for important points and <i>Italics</i> for emphasis.</li>
+                        <li>Use bullet or numbered lists for clarity.</li>
+                        <li>Add multiple image links (comma or new line separated).</li>
+                        <li>Review the content for grammar and accuracy before publishing.</li>
+                    </ul>
+                </div>
+
+                <form id="newsForm">
+                    <div class="form-group">
+                        <label for="title">Title *</label>
+                        <input type="text" id="title" required placeholder="Enter article title">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="content">Content *</label>
+
+                        <!-- Toolbar -->
+                        <div id="toolbar" class="toolbar">
+                            <button type="button" data-cmd="bold"><b>B</b></button>
+                            <button type="button" data-cmd="italic"><i>I</i></button>
+                            <button type="button" data-cmd="underline"><u>U</u></button>
+                            <button type="button" data-cmd="insertUnorderedList"><i class="fa-solid fa-list-ul"></i></button>
+                            <button type="button" data-cmd="insertOrderedList"><i class="fa-solid fa-list-ol"></i></button>
+                        </div>
+
+                        <!-- Rich Text Area -->
+                        <div id="content" contenteditable="true" class="content-editor" placeholder="Write your article content here..."></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="author">Author</label>
+                        <input type="text" id="author" placeholder="Author name (optional)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="imageUrl">Image URLs</label>
+                        <textarea id="imageUrl" placeholder="Enter one or more image links (comma or newline separated)..."></textarea>
+                        <div id="imagePreviewContainer" class="image-preview-container"></div>
+                    </div>
+
+                    <button type="submit" class="btn" id="submitBtn">
+                        <i class="fa-solid fa-upload"></i> Publish Article
+                    </button>
+                </form>
+            </div>
+
+            <!-- News List -->
+            <div class="news-list">
+                <h2><i class="fa-solid fa-list"></i> Published Articles</h2>
+                <div id="newsList">
+                    <p style="text-align: center; color: #666;">Loading articles...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-script.js" type="module"></script>
+</body>
+</html>
