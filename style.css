@@ -132,12 +132,13 @@ main {
     border-radius: 14px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.15), inset 0 1px 0 #fff;
     overflow: hidden;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    cursor: pointer;
 }
 
 .news-card:hover {
-    transform: scale(1.015);
-    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+    transform: scale(1.01);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
 }
 
 .news-card img {
@@ -146,9 +147,15 @@ main {
     object-fit: cover;
     border-bottom: 1px solid #ddd;
     background: #f9f9f9;
+    transition: transform 0.3s ease;
+}
+
+.news-card:hover img {
+    transform: scale(1.03);
 }
 
 .news-card-content {
+    height: auto;
     padding: 1.25rem;
 }
 

@@ -101,8 +101,9 @@ newsForm.addEventListener('submit', async (e) => {
             title: document.getElementById('title').value.trim(),
             content: contentArea.innerHTML, // Save formatted HTML
             author: document.getElementById('author').value.trim() || 'Admin',
-            imageUrls: imageUrls,
-            createdAt: Timestamp.now()
+            imageUrls: imageUrls, // Array of images
+            createdAt: Timestamp.now(),
+            views: 0 // Initialize views to zero
         };
 
         await addDoc(collection(db, 'news'), newsData);
@@ -154,25 +155,25 @@ async function loadNews() {
 }
 
 // ======= CREATE NEWS ITEM =======
+// NO IMAGE shown in admin panel (only text info and delete button)
 function createNewsItem(id, news) {
     const item = document.createElement('div');
     item.className = 'news-item';
     const date = new Date(news.createdAt.seconds * 1000).toLocaleString();
 
-    const imagesHtml = (news.imageUrls || [])
-        .map(url => `<img src="${url}" class="news-thumb">`)
-        .join('');
-
     // Strip HTML tags and shorten content
     const plainText = news.content.replace(/<[^>]+>/g, '');
     const shortText = plainText.length > 150 ? plainText.substring(0, 150) + '...' : plainText;
+
+    // Show views count, default to 0 if not set
+    const views = typeof news.views === "number" ? news.views : 0;
 
     item.innerHTML = `
         <div class="news-item-content">
             <h3>${news.title}</h3>
             <p class="meta">${date} - By ${news.author}</p>
             <p class="short-preview">${shortText}</p>
-            <div class="news-images">${imagesHtml}</div>
+            <p class="views-count"><i class="fa-solid fa-eye"></i> ${views} views</p>
         </div>
         <div class="news-item-actions">
             <button class="btn btn-small btn-danger" onclick="deleteNews('${id}')">

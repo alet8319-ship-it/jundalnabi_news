@@ -1,7 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getFirestore, collection, getDocs, getDoc, doc, orderBy, query } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import { getFirestore, collection, getDocs, getDoc, doc, orderBy, query, where, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyA1kGDOAuQRqdgXHX3Ugjj_zL7_bqYXos0",
     authDomain: "myapp-3a874.firebaseapp.com",
@@ -12,13 +11,30 @@ const firebaseConfig = {
     appId: "1:430236087961:web:d7b0e75c6cf2498c9b6a08",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// URL params
 const urlParams = new URLSearchParams(window.location.search);
 const articleId = urlParams.get('id');
+
+// --- Algorithm selector elements
+const sortTypeEl = document.getElementById('newsSortType');
+const categoryInputEl = document.getElementById('newsCategoryInput');
+if (sortTypeEl) {
+    sortTypeEl.addEventListener('change', () => {
+        if (sortTypeEl.value === 'category') {
+            categoryInputEl.style.display = 'inline-block';
+        } else {
+            categoryInputEl.style.display = 'none';
+        }
+        loadNews();
+    });
+}
+if (categoryInputEl) {
+    categoryInputEl.addEventListener('input', () => {
+        loadNews();
+    });
+}
 
 if (articleId) {
     loadSingleArticle(articleId);
@@ -26,46 +42,52 @@ if (articleId) {
     loadNews();
 }
 
-// =============================
-// LOAD SINGLE ARTICLE
-// =============================
 async function loadSingleArticle(id) {
     const loadingEl = document.getElementById('loading');
     const newsContainer = document.getElementById('newsContainer');
-
     try {
         const docRef = doc(db, 'news', id);
         const docSnap = await getDoc(docRef);
 
-        loadingEl.style.display = 'none';
-
         if (docSnap.exists()) {
-            const news = docSnap.data();
+            // INCREMENT VIEWS ON ARTICLE LOAD
+            await updateDoc(docRef, { views: increment(1) });
+
+            // re-fetch to get updated views
+            const docSnapUpdated = await getDoc(docRef);
+            const news = docSnapUpdated.data();
+
+            loadingEl.style.display = 'none';
             newsContainer.innerHTML = createArticleView(news);
             updatePageMeta(news, id);
             addStructuredData(news, id);
         } else {
+            loadingEl.style.display = 'none';
             newsContainer.innerHTML = '<div class="no-news">Article not found.</div>';
         }
     } catch (error) {
         console.error('Error loading article:', error);
+        loadingEl.style.display = 'none';
         loadingEl.innerHTML = '<div class="no-news">Error loading article. Please try again later.</div>';
     }
 }
 
-// =============================
-// SEO META TAG UPDATES
-// =============================
+function getFirstImage(news, fallback) {
+    if (Array.isArray(news.imageUrls) && news.imageUrls.length > 0) {
+        return news.imageUrls[0];
+    }
+    return [news.imageUrl, news.image, news.img, news.photo, news.thumbnail]
+        .find(url => typeof url === 'string' && url.trim().length > 0) || fallback;
+}
+
 function updatePageMeta(news, id) {
     const title = news.title || 'JundAlNabi News';
     const description = (news.content || '').substring(0, 160).replace(/[#*>\[\]]/g, '');
-    const image = news.imageUrl || 'https://via.placeholder.com/800x400?text=JundAlNabi';
+    const image = getFirstImage(news, 'https://via.placeholder.com/800x400?text=JundAlNabi');
     const url = `${window.location.origin}/index.html?id=${id}`;
 
-    // Set <title>
     document.title = `${title} - JundAlNabi`;
 
-    // Helper function for meta tag updates
     const setMeta = (selector, attr, value) => {
         let tag = document.querySelector(selector);
         if (!tag) {
@@ -77,24 +99,18 @@ function updatePageMeta(news, id) {
         tag.setAttribute(attr, value);
     };
 
-    // Standard Meta
     setMeta('meta[name="description"]', 'content', description);
     setMeta('meta[name="keywords"]', 'content', news.keywords || 'Islamic news, JundAlNabi, religion, global updates');
-
-    // Open Graph
     setMeta('meta[property="og:title"]', 'content', title);
     setMeta('meta[property="og:description"]', 'content', description);
     setMeta('meta[property="og:image"]', 'content', image);
     setMeta('meta[property="og:url"]', 'content', url);
     setMeta('meta[property="og:type"]', 'content', 'article');
-
-    // Twitter
     setMeta('meta[name="twitter:card"]', 'content', 'summary_large_image');
     setMeta('meta[property="twitter:title"]', 'content', title);
     setMeta('meta[property="twitter:description"]', 'content', description);
     setMeta('meta[property="twitter:image"]', 'content', image);
 
-    // Canonical link
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) {
         canonical = document.createElement('link');
@@ -104,9 +120,6 @@ function updatePageMeta(news, id) {
     canonical.setAttribute('href', url);
 }
 
-// =============================
-// STRUCTURED DATA (SCHEMA.ORG)
-// =============================
 function addStructuredData(news, id) {
     const scriptId = 'structured-data';
     const existing = document.getElementById(scriptId);
@@ -114,11 +127,12 @@ function addStructuredData(news, id) {
 
     const url = `${window.location.origin}/index.html?id=${id}`;
     const datePublished = news.createdAt ? new Date(news.createdAt.seconds * 1000).toISOString() : '';
+    const image = getFirstImage(news, "");
     const schemaData = {
         "@context": "https://schema.org",
         "@type": "NewsArticle",
         "headline": news.title,
-        "image": [news.imageUrl || ""],
+        "image": [image],
         "datePublished": datePublished,
         "dateModified": datePublished,
         "author": {
@@ -133,7 +147,7 @@ function addStructuredData(news, id) {
                 "url": "https://via.placeholder.com/120x120?text=JundAlNabi"
             }
         },
-        "description": news.content.substring(0, 155),
+        "description": (news.content || '').substring(0, 155),
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": url
@@ -147,9 +161,6 @@ function addStructuredData(news, id) {
     document.head.appendChild(script);
 }
 
-// =============================
-// ARTICLE VIEW GENERATOR
-// =============================
 function createArticleView(news) {
     const date = news.createdAt
         ? new Date(news.createdAt.seconds * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
@@ -157,26 +168,26 @@ function createArticleView(news) {
 
     const formattedContent = formatContent(news.content);
     const categoryBadge = news.category ? `<span class="article-category">${news.category}</span>` : '';
+    const imageUrl = getFirstImage(news, 'https://via.placeholder.com/800x400?text=No+Image');
+    const views = typeof news.views === "number" ? news.views : 0;
 
     return `
         <div class="article-full">
             <button class="back-btn" onclick="window.location.href='index.html'">
                 <i class="fa-solid fa-arrow-left"></i> Back
             </button>
-
             ${categoryBadge}
-            ${news.imageUrl ? `<img src="${news.imageUrl}" alt="${news.title}" class="article-image" onerror="this.style.display='none'">` : ''}
-
+            <img src="${imageUrl}" alt="${news.title}" class="article-image" 
+                 onerror="this.src='https://via.placeholder.com/800x400?text=Image+Unavailable'">
             <div class="article-header">
                 <h1>${news.title}</h1>
                 <div class="article-meta">
                     <span><i class="fa-solid fa-user"></i> ${news.author || 'Admin'}</span>
                     <span><i class="fa-solid fa-calendar"></i> ${date}</span>
+                    <span><i class="fa-solid fa-eye"></i> ${views} views</span>
                 </div>
             </div>
-
             <div class="article-content">${formattedContent}</div>
-
             <div class="share-buttons">
                 <h4>Share this article</h4>
                 <div class="share-icons">
@@ -190,9 +201,6 @@ function createArticleView(news) {
     `;
 }
 
-// =============================
-// FORMATTER & UTILITIES
-// =============================
 function formatContent(content = '') {
     return content
         .replace(/^## (.+)$/gm, '<h2>$1</h2>')
@@ -204,27 +212,49 @@ function formatContent(content = '') {
         .replace(/\n/g, '<br>');
 }
 
-// =============================
-// LOAD ALL NEWS (HOMEPAGE)
-// =============================
+// --- Main News Algorithm ---
 async function loadNews() {
     const loadingEl = document.getElementById('loading');
     const newsContainer = document.getElementById('newsContainer');
+    const sortType = sortTypeEl ? sortTypeEl.value : 'latest';
+    const category = categoryInputEl ? categoryInputEl.value.trim() : "";
 
     try {
-        const newsQuery = query(collection(db, 'news'), orderBy('createdAt', 'desc'));
-        const querySnapshot = await getDocs(newsQuery);
+        let newsQuery;
+        if (sortType === 'latest') {
+            newsQuery = query(collection(db, 'news'), orderBy('createdAt', 'desc'));
+        } else if (sortType === 'featured') {
+            newsQuery = query(collection(db, 'news'), orderBy('featured', 'desc'), orderBy('createdAt', 'desc'));
+        } else if (sortType === 'popular') {
+            newsQuery = query(collection(db, 'news'), orderBy('views', 'desc'), orderBy('createdAt', 'desc'));
+        } else if (sortType === 'category' && category) {
+            newsQuery = query(collection(db, 'news'), orderBy('createdAt', 'desc'));
+        } else {
+            newsQuery = query(collection(db, 'news'), orderBy('createdAt', 'desc'));
+        }
 
+        const querySnapshot = await getDocs(newsQuery);
         loadingEl.style.display = 'none';
-        if (querySnapshot.empty) {
+        newsContainer.innerHTML = '';
+
+        let newsList = [];
+        querySnapshot.forEach((docSnap) => {
+            const news = docSnap.data();
+            news.id = docSnap.id;
+            newsList.push(news);
+        });
+
+        if (sortType === 'category' && category) {
+            newsList = newsList.filter(news => news.category && news.category.toLowerCase() === category.toLowerCase());
+        }
+
+        if (newsList.length === 0) {
             newsContainer.innerHTML = '<div class="no-news">No news available yet.</div>';
             return;
         }
 
-        newsContainer.innerHTML = '';
-        querySnapshot.forEach((docSnap) => {
-            const news = docSnap.data();
-            newsContainer.appendChild(createNewsCard(docSnap.id, news));
+        newsList.forEach(news => {
+            newsContainer.appendChild(createNewsCard(news.id, news));
         });
     } catch (error) {
         console.error('Error loading news:', error);
@@ -233,6 +263,9 @@ async function loadNews() {
 }
 
 function createNewsCard(id, news) {
+    const imageUrl = getFirstImage(news, 'https://via.placeholder.com/600x300?text=No+Image');
+    const views = typeof news.views === "number" ? news.views : 0;
+
     const card = document.createElement('div');
     card.className = 'news-card';
     card.addEventListener('click', () => (window.location.href = `index.html?id=${id}`));
@@ -242,7 +275,8 @@ function createNewsCard(id, news) {
     const categoryBadge = news.category ? `<span class="category-badge">${news.category}</span>` : '';
 
     card.innerHTML = `
-        ${news.imageUrl ? `<img src="${news.imageUrl}" alt="${news.title}">` : ''}
+        <img src="${imageUrl}" alt="${news.title || 'News Image'}"
+             onerror="this.src='https://via.placeholder.com/600x300?text=Image+Unavailable'">
         <div class="news-card-content">
             ${categoryBadge}
             <h3>${news.title}</h3>
@@ -250,15 +284,14 @@ function createNewsCard(id, news) {
             <div class="news-meta">
                 <span><i class="fa-solid fa-calendar"></i> ${date}</span>
                 <span><i class="fa-solid fa-user"></i> ${news.author || 'Admin'}</span>
+                <span><i class="fa-solid fa-eye"></i> ${views} views</span>
             </div>
         </div>
     `;
     return card;
 }
 
-// =============================
-// SHARE FUNCTIONS
-// =============================
+// Social sharing functions
 window.shareOnFacebook = () => window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`, '_blank');
 window.shareOnTwitter = () => window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(window.location.href)}&text=${encodeURIComponent(document.title)}`, '_blank');
 window.shareOnWhatsApp = () => window.open(`https://wa.me/?text=${encodeURIComponent(document.title + ' ' + window.location.href)}`, '_blank');
@@ -267,9 +300,7 @@ window.copyLink = () => {
     alert('Link copied!');
 };
 
-// =============================
-// MOBILE MENU
-// =============================
+// Menu toggle logic
 const menu = document.getElementById('menu_bar');
 const nav = document.getElementById('nav_bar');
 if (menu && nav) {
