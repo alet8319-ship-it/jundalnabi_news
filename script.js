@@ -82,7 +82,7 @@ function getFirstImage(news, fallback) {
 
 function updatePageMeta(news, id) {
     const title = news.title || 'JundAlNabi News';
-    const description = (news.content || '').substring(0, 160).replace(/[#*>\[\]]/g, '');
+    const description = getCardDescription(news);
     const image = getFirstImage(news, 'https://via.placeholder.com/800x400?text=JundAlNabi');
     const url = `${window.location.origin}/index.html?id=${id}`;
 
@@ -128,6 +128,7 @@ function addStructuredData(news, id) {
     const url = `${window.location.origin}/index.html?id=${id}`;
     const datePublished = news.createdAt ? new Date(news.createdAt.seconds * 1000).toISOString() : '';
     const image = getFirstImage(news, "");
+    const description = getCardDescription(news);
     const schemaData = {
         "@context": "https://schema.org",
         "@type": "NewsArticle",
@@ -147,7 +148,7 @@ function addStructuredData(news, id) {
                 "url": "https://via.placeholder.com/120x120?text=JundAlNabi"
             }
         },
-        "description": (news.content || '').substring(0, 155),
+        "description": description,
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": url
@@ -212,6 +213,23 @@ function formatContent(content = '') {
         .replace(/\n/g, '<br>');
 }
 
+// --- Extract a plain text description for news cards ---
+// Prefer description field, else extract first paragraph or first 160 chars of plain text from HTML content
+function getCardDescription(news) {
+    if (news.description && typeof news.description === "string" && news.description.trim() !== "") {
+        return news.description.trim();
+    }
+    // Strip HTML and get first paragraph or fallback
+    const div = document.createElement('div');
+    div.innerHTML = news.content || '';
+    let firstParagraph = div.querySelector('p');
+    if (firstParagraph) {
+        return firstParagraph.textContent.trim();
+    }
+    // Fallback: strip all HTML and truncate
+    return div.textContent.trim().substring(0, 160) + '...';
+}
+
 // --- Main News Algorithm ---
 async function loadNews() {
     const loadingEl = document.getElementById('loading');
@@ -265,14 +283,13 @@ async function loadNews() {
 function createNewsCard(id, news) {
     const imageUrl = getFirstImage(news, 'https://via.placeholder.com/600x300?text=No+Image');
     const views = typeof news.views === "number" ? news.views : 0;
+    const date = news.createdAt ? new Date(news.createdAt.seconds * 1000).toLocaleDateString() : 'No date';
+    const categoryBadge = news.category ? `<span class="category-badge">${news.category}</span>` : '';
+    const description = getCardDescription(news);
 
     const card = document.createElement('div');
     card.className = 'news-card';
     card.addEventListener('click', () => (window.location.href = `index.html?id=${id}`));
-
-    const date = news.createdAt ? new Date(news.createdAt.seconds * 1000).toLocaleDateString() : 'No date';
-    const excerpt = (news.content || '').substring(0, 120).replace(/[#*>\[\]]/g, '') + '...';
-    const categoryBadge = news.category ? `<span class="category-badge">${news.category}</span>` : '';
 
     card.innerHTML = `
         <img src="${imageUrl}" alt="${news.title || 'News Image'}"
@@ -280,7 +297,7 @@ function createNewsCard(id, news) {
         <div class="news-card-content">
             ${categoryBadge}
             <h3>${news.title}</h3>
-            <p>${excerpt}</p>
+            <p class="news-description">${description}</p>
             <div class="news-meta">
                 <span><i class="fa-solid fa-calendar"></i> ${date}</span>
                 <span><i class="fa-solid fa-user"></i> ${news.author || 'Admin'}</span>
