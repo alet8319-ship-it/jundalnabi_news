@@ -7,17 +7,15 @@ Disallow: /config/
 Disallow: /firebase/
 Disallow: /private/
 Disallow: /tmp/
-
-# Prevent duplicate or sensitive query indexing
 Disallow: /*?*
 
-# Sitemap for better crawling
-Sitemap: https://codetoweb.tech/sitemap.xml
+# Sitemap
+Sitemap: https://www.codetoweb.tech/sitemap.xml
 
-# Crawl-delay for fair server usage (optional)
+# Crawl-delay for fair server usage
 Crawl-delay: 5
 
-# Additional directives for specific bots
+# Specific bot rules
 User-agent: Googlebot
 Allow: /
 
