@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Website Updates</title>
+  <link rel="stylesheet" href="updates.css">
+  <script src="https://kit.fontawesome.com/a2e0f1f5d4.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <nav>
+    <div class="logo">
+      <img src="logo/logo.png" alt="Logo">
+      <h1>Website Updates</h1>
+    </div>
+    <i class="fa-solid fa-bars" id="menu_icon"></i>
+    <ul id="nav_bar">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="#marker">Marker</a></li>
+      <li><a href="#updates">Updates</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section class="hero">
+      <h2>Latest Updates</h2>
+      <p>Stay up to date with improvements, new features, and announcements.</p>
+    </section>
+
+    <div class="news-sort-selector">
+      <select id="sortSelect">
+        <option value="latest">Sort by: Latest</option>
+        <option value="oldest">Oldest</option>
+      </select>
+      <input type="text" id="searchInput" placeholder="Search updates...">
+    </div>
+
+    <div id="updatesContainer" class="news-container"></div>
+    <p id="loadingMsg">Loading updates...</p>
+  </main>
+
+  <script src="updates.js"></script>
+</body>
+</html>
