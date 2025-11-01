@@ -1,61 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta property="og:url" content="https://www.codetoweb.tech/">
-    <meta property="og:image" content="https://www.codetoweb.tech/og-image.jpg">
-    <meta property="twitter:image" content="https://www.codetoweb.tech/twitter-image.jpg">
-    <link rel="canonical" href="https://www.codetoweb.tech/">
-    <title>JundAlNabi - News</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Old iOS style -->
-    <link rel="stylesheet" href="style.css">
+  <!-- SEO and Social -->
+  <meta property="og:url" content="https://www.codetoweb.tech/" />
+  <meta property="og:image" content="https://www.codetoweb.tech/og-image.jpg" />
+  <meta property="twitter:image" content="https://www.codetoweb.tech/twitter-image.jpg" />
+  <link rel="canonical" href="https://www.codetoweb.tech/" />
 
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="shortcut icon" href="logo/logo.ico" type="image/x-icon">
+  <!-- Google Ads -->
+  <script 
+    async 
+    src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2681103030876233"
+    crossorigin="anonymous">
+  </script>
+
+  <title>JundAlNabi - News</title>
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Font Awesome -->
+  <link 
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-5zjvEqo+ch1cZx1HgSKvj4o/5HZ5ZtUuJHJoTbxRrR3owN4K2mM7+6jDku8Yw+G2SyFGJ7c3zFErw3xkqQXTw=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="logo/logo.ico" type="image/x-icon" />
 </head>
 <body>
-    <header>
-        <nav>
-            <div class="logo">
-                <img src="logo/logo.png" alt="jundalnabi">
-                <h1>JundAlNabi</h1>
-            </div>
-            <ul id="nav_bar">
-                <li><a href="#home">Home</a></li>
-                <li><a href="about.html">About</a></li>
-                <li><a href="#marker">Marker</a></li>
-                <li><a href="#updates">Updates</a></li>
-            </ul>
-            <i id="menu_bar" class="fa-solid fa-ellipsis-vertical"></i>
-        </nav>
-    </header>
+  <header>
+    <nav>
+      <div class="logo">
+        <img src="logo/logo.png" alt="JundAlNabi Logo" />
+        <h1>JundAlNabi</h1>
+      </div>
+      <ul id="nav_bar">
+        <li><a href="#home">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="#marker">Marker</a></li>
+        <li><a href="#updates">Updates</a></li>
+      </ul>
+      <button id="menu_bar" aria-label="Menu">
+        <i class="fa-solid fa-ellipsis-vertical"></i>
+      </button>
+    </nav>
+  </header>
 
- <div class="news-sort-selector">
-  <select id="newsSortType">
-    <option value="latest">Latest</option>
-    <option value="featured">Featured First</option>
-    <option value="popular">Popular</option>
-    <option value="category">Category</option>
-  </select>
-  <input type="text" id="newsCategoryInput" placeholder="Category name..." style="display:none;">
-</div>
+  <div class="news-sort-selector">
+    <select id="newsSortType">
+      <option value="latest">Latest</option>
+      <option value="featured">Featured First</option>
+      <option value="popular">Popular</option>
+      <option value="category">Category</option>
+    </select>
+    <input 
+      type="text" 
+      id="newsCategoryInput" 
+      placeholder="Category name..." 
+      style="display: none;" 
+    />
+  </div>
 
-    <main>
-        <div class="hero">
-            <h2>Latest News & Updates</h2>
-            <p>Stay informed with the latest stories and articles</p>
-        </div>
+  <main>
+    <section class="hero">
+      <h2>Latest News & Updates</h2>
+      <p>Stay informed with the latest stories and articles</p>
+    </section>
 
-        <div id="loading" class="loading">
-            <i class="fa-solid fa-spinner fa-spin"></i> Loading news...
-        </div>
+    <div id="loading" class="loading">
+      <i class="fa-solid fa-spinner fa-spin"></i> Loading news...
+    </div>
 
-        <div id="newsContainer" class="news-container"></div>
-    </main>
+    <div id="newsContainer" class="news-container"></div>
+  </main>
 
-    <script src="script.js" type="module"></script>
+  <!-- Google AdSense Ad -->
+  <ins class="adsbygoogle"
+    style="display:block"
+    data-ad-client="ca-pub-2681103030876233"
+    data-ad-slot="7029227212"
+    data-ad-format="auto"
+    data-full-width-responsive="true">
+  </ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+
+  <script src="script.js" type="module"></script>
 </body>
 </html>
