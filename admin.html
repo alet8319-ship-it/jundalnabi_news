@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Admin Panel - JundAlNabi</title>
     <link rel="stylesheet" href="admin-style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -29,7 +29,7 @@
     </div>
 
     <!-- Admin Dashboard -->
-    <div id="adminDashboard" class="admin-dashboard">
+    <div id="adminDashboard" class="admin-dashboard" style="display:none;">
         <header class="admin-header">
             <h1><i class="fa-solid fa-shield-halved"></i> Admin Panel</h1>
             <button id="logoutBtn" class="logout-btn">
@@ -66,6 +66,8 @@
                         <li>Use <b>Bold</b> for important points and <i>Italics</i> for emphasis.</li>
                         <li>Use bullet or numbered lists for clarity.</li>
                         <li>Add multiple image links (comma or new line separated).</li>
+                        <li>Provide a short description/summary (will show on cards).</li>
+                        <li>Add relevant keywords (comma separated) for SEO.</li>
                         <li>Review the content for grammar and accuracy before publishing.</li>
                     </ul>
                 </div>
@@ -74,6 +76,11 @@
                     <div class="form-group">
                         <label for="title">Title *</label>
                         <input type="text" id="title" required placeholder="Enter article title">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Description / Summary</label>
+                        <textarea id="description" placeholder="Short summary for cards and meta (optional)"></textarea>
                     </div>
 
                     <div class="form-group">
@@ -101,6 +108,12 @@
                         <label for="imageUrl">Image URLs</label>
                         <textarea id="imageUrl" placeholder="Enter one or more image links (comma or newline separated)..."></textarea>
                         <div id="imagePreviewContainer" class="image-preview-container"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="keywords">Keywords (comma or newline separated)</label>
+                        <input type="text" id="keywords" placeholder="e.g. security, privacy, tech">
+                        <small class="muted">Keywords will be saved as an array and used for search/sorting.</small>
                     </div>
 
                     <button type="submit" class="btn" id="submitBtn">

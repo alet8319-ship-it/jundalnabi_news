@@ -1,4 +1,4 @@
-/* ===== iOS Classic Style Admin Panel ===== */
+/* ===== iOS Classic Style Admin Panel (updated) ===== */
 * {
   margin: 0;
   padding: 0;
@@ -232,6 +232,7 @@ textarea {
   display: flex;
   justify-content: space-between;
   gap: 1rem;
+  align-items: flex-start;
 }
 
 .news-item:last-child {
@@ -239,13 +240,15 @@ textarea {
 }
 
 .news-item-content {
-  flex: 1;
+  flex: 1 1 65%;
+  min-width: 0;
 }
 
 .news-item h3 {
   margin-bottom: 0.3rem;
   color: var(--primary);
   font-size: 1.1rem;
+  word-break: break-word;
 }
 
 .news-item p {
@@ -255,7 +258,8 @@ textarea {
 }
 
 /* Short paragraph preview */
-.news-content {
+.news-content,
+.short-preview {
   color: #444;
   font-size: 0.9rem;
   line-height: 1.3;
@@ -265,6 +269,43 @@ textarea {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+}
+
+/* Keywords display in admin list */
+.news-keywords {
+  margin: 0.5rem 0 0.6rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.keyword-badge {
+  display: inline-block;
+  background: linear-gradient(to bottom, #fefefe 0%, #d7dbe0 100%);
+  color: var(--primary);
+  border: 1px solid var(--border);
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  box-shadow: inset 0 1px 0 #fff;
+}
+
+/* Views count */
+.views-count {
+  color: #777;
+  font-size: 0.85rem;
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Actions */
+.news-item-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
 }
 
 /* Alerts */
@@ -353,13 +394,49 @@ textarea {
   border: 1px solid #ccc;
 }
 
+/* Small helper text */
+.muted {
+  color: #777;
+  font-size: 0.85rem;
+  display: block;
+  margin-top: 6px;
+}
+
 /* Responsive */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .container {
     padding: 0 1rem;
   }
 
   .news-item {
     flex-direction: column;
+    align-items: stretch;
   }
+
+  .news-item-actions {
+    margin-top: 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 0.8rem;
+  }
+
+  .news-item {
+    gap: 0.5rem;
+  }
+
+  .stat-card h3 {
+    font-size: 1.4rem;
+  }
+}
+
+/* Accessibility: ensure focus states visible */
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid rgba(0, 122, 255, 0.15);
+  outline-offset: 0;
 }

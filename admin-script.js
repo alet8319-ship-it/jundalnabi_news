@@ -27,16 +27,17 @@ const newsForm = document.getElementById('newsForm');
 const logoutBtn = document.getElementById('logoutBtn');
 const imageUrlInput = document.getElementById('imageUrl');
 const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+const keywordsInput = document.getElementById('keywords');
 
 // Authentication State
 onAuthStateChanged(auth, (user) => {
     if (user) {
         loginSection.style.display = 'none';
-        adminDashboard.classList.add('active');
+        adminDashboard.style.display = 'block';
         loadNews();
     } else {
         loginSection.style.display = 'block';
-        adminDashboard.classList.remove('active');
+        adminDashboard.style.display = 'none';
     }
 });
 
@@ -97,11 +98,22 @@ newsForm.addEventListener('submit', async (e) => {
             .map(u => u.trim())
             .filter(u => u);
 
+        // Parse keywords input into an array of trimmed keywords (comma or newline separated)
+        let keywordsValue = [];
+        if (keywordsInput) {
+            keywordsValue = keywordsInput.value
+                .split(/[\n,]+/)
+                .map(k => k.trim())
+                .filter(k => k);
+        }
+
         const newsData = {
             title: document.getElementById('title').value.trim(),
+            description: (document.getElementById('description') ? document.getElementById('description').value.trim() : '') || '',
             content: contentArea.innerHTML, // Save formatted HTML
             author: document.getElementById('author').value.trim() || 'Admin',
             imageUrls: imageUrls, // Array of images
+            keywords: keywordsValue, // Array of keywords
             createdAt: Timestamp.now(),
             views: 0 // Initialize views to zero
         };
@@ -111,8 +123,10 @@ newsForm.addEventListener('submit', async (e) => {
         newsForm.reset();
         imagePreviewContainer.innerHTML = '';
         contentArea.innerHTML = '';
+        if (keywordsInput) keywordsInput.value = '';
         loadNews();
     } catch (error) {
+        console.error('Publish error:', error);
         showAlert('uploadAlert', 'Error publishing article. Please try again.', 'error');
     } finally {
         submitBtn.disabled = false;
@@ -162,17 +176,24 @@ function createNewsItem(id, news) {
     const date = new Date(news.createdAt.seconds * 1000).toLocaleString();
 
     // Strip HTML tags and shorten content
-    const plainText = news.content.replace(/<[^>]+>/g, '');
+    const plainText = (news.content || '').replace(/<[^>]+>/g, '');
     const shortText = plainText.length > 150 ? plainText.substring(0, 150) + '...' : plainText;
 
     // Show views count, default to 0 if not set
     const views = typeof news.views === "number" ? news.views : 0;
 
+    // Prepare keywords display (if any)
+    let keywordsHtml = '';
+    if (Array.isArray(news.keywords) && news.keywords.length > 0) {
+        keywordsHtml = `<div class="news-keywords">${news.keywords.map(k => `<span class="keyword-badge">${escapeHtml(k)}</span>`).join(' ')}</div>`;
+    }
+
     item.innerHTML = `
         <div class="news-item-content">
-            <h3>${news.title}</h3>
-            <p class="meta">${date} - By ${news.author}</p>
-            <p class="short-preview">${shortText}</p>
+            <h3>${escapeHtml(news.title)}</h3>
+            <p class="meta">${escapeHtml(date)} - By ${escapeHtml(news.author || 'Admin')}</p>
+            <p class="short-preview">${escapeHtml(shortText)}</p>
+            ${keywordsHtml}
             <p class="views-count"><i class="fa-solid fa-eye"></i> ${views} views</p>
         </div>
         <div class="news-item-actions">
@@ -199,6 +220,16 @@ window.deleteNews = async function(id) {
 // ======= ALERT HELPER =======
 function showAlert(elementId, message, type) {
     const alertEl = document.getElementById(elementId);
-    alertEl.innerHTML = `<div class="alert alert-${type}">${message}</div>`;
+    alertEl.innerHTML = `<div class="alert alert-${type}">${escapeHtml(message)}</div>`;
     setTimeout(() => alertEl.innerHTML = '', 5000);
+}
+
+// ======= Simple HTML escape for user-provided strings =======
+function escapeHtml(str = '') {
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
 }

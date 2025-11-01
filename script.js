@@ -100,7 +100,7 @@ function updatePageMeta(news, id) {
     };
 
     setMeta('meta[name="description"]', 'content', description);
-    setMeta('meta[name="keywords"]', 'content', news.keywords || 'Islamic news, JundAlNabi, religion, global updates');
+    setMeta('meta[name="keywords"]', 'content', news.keywords || 'Gernal news, JundAlNabi, religion, global updates');
     setMeta('meta[property="og:title"]', 'content', title);
     setMeta('meta[property="og:description"]', 'content', description);
     setMeta('meta[property="og:image"]', 'content', image);
