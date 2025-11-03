@@ -17,7 +17,6 @@ const db = getFirestore(app);
 const urlParams = new URLSearchParams(window.location.search);
 const articleId = urlParams.get('id');
 
-// --- Algorithm selector elements
 const sortTypeEl = document.getElementById('newsSortType');
 const categoryInputEl = document.getElementById('newsCategoryInput');
 if (sortTypeEl) {
@@ -50,10 +49,8 @@ async function loadSingleArticle(id) {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-            // INCREMENT VIEWS ON ARTICLE LOAD
             await updateDoc(docRef, { views: increment(1) });
 
-            // re-fetch to get updated views
             const docSnapUpdated = await getDoc(docRef);
             const news = docSnapUpdated.data();
 
@@ -267,7 +264,7 @@ async function loadNews() {
         }
 
         if (newsList.length === 0) {
-            newsContainer.innerHTML = '<div class="no-news">No news available yet.</div>';
+            newsContainer.innerHTML = '<div class="no-news">Sorry we don`t found any Article yet report us for this bug.</div>';
             return;
         }
 

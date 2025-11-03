@@ -46,9 +46,9 @@ nav .logo{
     justify-content: center;
 }
 nav .logo img{
-    height: 100px;
-    width: 100px;
-    filter: drop-shadow(0.1rem 0.1rem 1rem rgb(87, 81, 82));
+    height: 60px;
+    width: 60px;
+    filter: drop-shadow(0.1rem 0.1rem 0.01rem rgb(0, 0, 0));
 }
 
 nav .logo h1 {
