@@ -79,7 +79,7 @@ nav ul li a:hover {
     background: rgba(0, 122, 255, 0.1);
 }
 
-nav .fa-solid {
+nav #menu_bar {
     color: #333;
     font-size: 1.5rem;
     display: none;
@@ -455,7 +455,7 @@ main {
         padding: 0 1.2rem;
     }
 
-    nav .fa-solid {
+    nav #menu_bar {
         display: block;
     }
 
