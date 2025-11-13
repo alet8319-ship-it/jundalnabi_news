@@ -115,6 +115,14 @@
                         <input type="text" id="keywords" placeholder="e.g. security, privacy, tech">
                         <small class="muted">Keywords will be saved as an array and used for search/sorting.</small>
                     </div>
+                    
+                    <!-- Category selection: -->
+                    <div class="form-group">
+                        <label for="newsCategory">Category *</label>
+                        <select id="newsCategory" required></select>
+                        <input type="text" id="customCategory" placeholder="Custom Category" style="display:none; margin-top: 8px;" />
+                        <small class="muted">Choose a category or enter your own.</small>
+                    </div>
 
                     <button type="submit" class="btn" id="submitBtn">
                         <i class="fa-solid fa-upload"></i> Publish Article

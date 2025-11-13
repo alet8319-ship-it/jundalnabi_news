@@ -28,6 +28,53 @@ const logoutBtn = document.getElementById('logoutBtn');
 const imageUrlInput = document.getElementById('imageUrl');
 const imagePreviewContainer = document.getElementById('imagePreviewContainer');
 const keywordsInput = document.getElementById('keywords');
+const categoryInput = document.getElementById('newsCategory'); // ADDED for category select
+const customCategoryInput = document.getElementById('customCategory'); // ADDED for custom category
+
+// ======= Dynamic Categories =======
+// You can adjust these as your app grows
+const PREDEFINED_CATEGORIES = [
+    'World', 'Pakistan', 'Technology', 'Religion', 'Health', 'Finance', 'Opinion', 'Education', 'Sports', 'Other'
+];
+
+// Populate category select at load time (to let admin pick category or add their own)
+function populateCategoryOptions() {
+    if (!categoryInput) return;
+    // Clear existing options except for first
+    categoryInput.innerHTML = '';
+    // Add some system categories
+    PREDEFINED_CATEGORIES.forEach(cat => {
+        const opt = document.createElement('option');
+        opt.value = cat;
+        opt.textContent = cat;
+        categoryInput.appendChild(opt);
+    });
+    // Add an 'Other' option for custom category if not present
+    if (![...categoryInput.options].some(o => o.value === 'custom')) {
+        const opt = document.createElement('option');
+        opt.value = 'custom';
+        opt.textContent = 'Custom...';
+        categoryInput.appendChild(opt);
+    }
+}
+populateCategoryOptions();
+
+// Show/hide custom category field for admins
+if (categoryInput && customCategoryInput) {
+    categoryInput.addEventListener('change', () => {
+        if (categoryInput.value === 'custom') {
+            customCategoryInput.style.display = '';
+            customCategoryInput.required = true;
+            customCategoryInput.focus();
+        } else {
+            customCategoryInput.style.display = 'none';
+            customCategoryInput.required = false;
+            customCategoryInput.value = '';
+        }
+    });
+    // Hide initially
+    if (categoryInput.value !== 'custom') customCategoryInput.style.display = 'none';
+}
 
 // Authentication State
 onAuthStateChanged(auth, (user) => {
@@ -85,7 +132,7 @@ imageUrlInput.addEventListener('input', (e) => {
     });
 });
 
-// ======= SUBMIT NEWS =======
+// ======= SUBMIT NEWS WITH CHOSEN CATEGORY =======
 newsForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const submitBtn = document.getElementById('submitBtn');
@@ -107,6 +154,13 @@ newsForm.addEventListener('submit', async (e) => {
                 .filter(k => k);
         }
 
+        // Get category value
+        let categoryValue = categoryInput.value;
+        if (categoryValue === 'custom') {
+            // Use custom category field, stripped and validated
+            categoryValue = customCategoryInput.value.trim() || 'General';
+        }
+
         const newsData = {
             title: document.getElementById('title').value.trim(),
             description: (document.getElementById('description') ? document.getElementById('description').value.trim() : '') || '',
@@ -115,7 +169,8 @@ newsForm.addEventListener('submit', async (e) => {
             imageUrls: imageUrls, // Array of images
             keywords: keywordsValue, // Array of keywords
             createdAt: Timestamp.now(),
-            views: 0 // Initialize views to zero
+            views: 0, // Initialize views to zero
+            category: categoryValue // Store the category
         };
 
         await addDoc(collection(db, 'news'), newsData);
@@ -123,6 +178,7 @@ newsForm.addEventListener('submit', async (e) => {
         newsForm.reset();
         imagePreviewContainer.innerHTML = '';
         contentArea.innerHTML = '';
+        customCategoryInput.value = '';
         if (keywordsInput) keywordsInput.value = '';
         loadNews();
     } catch (error) {
@@ -169,7 +225,7 @@ async function loadNews() {
 }
 
 // ======= CREATE NEWS ITEM =======
-// NO IMAGE shown in admin panel (only text info and delete button)
+// Show category as well in admin list
 function createNewsItem(id, news) {
     const item = document.createElement('div');
     item.className = 'news-item';
@@ -188,10 +244,16 @@ function createNewsItem(id, news) {
         keywordsHtml = `<div class="news-keywords">${news.keywords.map(k => `<span class="keyword-badge">${escapeHtml(k)}</span>`).join(' ')}</div>`;
     }
 
+    // Show article category
+    const categoryHtml = news.category
+        ? `<div class="news-category">Category: <span class="category-badge">${escapeHtml(news.category)}</span></div>`
+        : '';
+
     item.innerHTML = `
         <div class="news-item-content">
             <h3>${escapeHtml(news.title)}</h3>
             <p class="meta">${escapeHtml(date)} - By ${escapeHtml(news.author || 'Admin')}</p>
+            ${categoryHtml}
             <p class="short-preview">${escapeHtml(shortText)}</p>
             ${keywordsHtml}
             <p class="views-count"><i class="fa-solid fa-eye"></i> ${views} views</p>

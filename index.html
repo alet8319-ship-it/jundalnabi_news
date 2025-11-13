@@ -1,15 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
   <meta property="og:url" content="https://www.codetoweb.tech/" />
   <meta property="og:image" content="https://www.codetoweb.tech/logo/logo.png" />
+  <meta property="og:title" content="JundAlNabi - Latest News & Updates" />
+  <meta property="og:description" content="Stay informed with the latest stories and articles news." />
+  
+  <!-- Twitter Meta Tags -->
+  <meta property="twitter:title" content="JundAlNabi - Latest News & Updates" />
+  <meta property="twitter:description" content="Stay informed with the latest stories and articles news." />
   <meta property="twitter:image" content="https://www.codetoweb.tech/logo/logo.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  
+  <!-- Canonical Link -->
   <link rel="canonical" href="https://www.codetoweb.tech/" />
+  
+  <!-- Google Ads Verification & Site Verification -->
   <meta name="google-adsense-account" content="ca-pub-2681103030876233">
   <meta name="google-site-verification" content="y8soujAfiVOxgpv8d015zmpAYej7kk7nFdfyYz3Ab1c" />
+<<<<<<< HEAD
+  
+  <!-- Google Ads Script -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2681103030876233" crossorigin="anonymous"></script>
+  
+  <title>JundAlNabi - News</title>
+  
+  <!-- Stylesheet -->
+=======
 
   <script async 
     src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2681103030876233"
@@ -17,22 +37,29 @@
 
   <title>JundAlNabi - News</title>
   
+>>>>>>> a63c13bd12c4b2ec0b7aa1900b5417675f606098
   <link rel="stylesheet" href="style.css" />
-
+  
   <!-- Font Awesome -->
+<<<<<<< HEAD
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" />
+  
+=======
  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
 
 
 
+>>>>>>> a63c13bd12c4b2ec0b7aa1900b5417675f606098
   <!-- Favicon -->
   <link rel="shortcut icon" href="logo/logo.ico" type="image/x-icon" />
 </head>
+
 <body>
   <header>
     <nav>
       <div class="logo">
-        <img src="logo/logo.png" alt="JundAlNabi Logo" />
+        <img src="logo/logo.png" alt="JundAlNabi Logo" loading="lazy" />
         <h1>JundAlNabi</h1>
       </div>
       <ul id="nav_bar">
@@ -54,11 +81,26 @@
       <option value="popular">Popular</option>
       <option value="category">Category</option>
     </select>
+    <select id="newsCategoryDropdown" style="display:none;">
+      <option value="">-- Choose Category --</option>
+      <option value="World">World</option>
+      <option value="Pakistan">Pakistan</option>
+      <option value="Technology">Technology</option>
+      <option value="Religion">Religion</option>
+      <option value="Health">Health</option>
+      <option value="Finance">Finance</option>
+      <option value="Opinion">Opinion</option>
+      <option value="Education">Education</option>
+      <option value="Sports">Sports</option>
+      <option value="Other">Other</option>
+    </select>
     <input 
       type="text" 
       id="newsCategoryInput" 
-      placeholder="Category name..." 
+      placeholder="Or type category..." 
       style="display: none;" 
+      aria-label="Category name"
+      autocomplete="off"
     />
   </div>
 
@@ -72,10 +114,12 @@
       <i class="fa-solid fa-spinner fa-spin"></i> Loading news...
     </div>
 
-    <div id="newsContainer" class="news-container"></div>
+    <div id="newsContainer" class="news-container">
+      <!-- Dynamic content will be loaded here -->
+    </div>
   </main>
 
-  <!-- Example In-article Ad (optional) -->
+  <!-- Google In-article Ad (optional) -->
   <div style="text-align:center; margin:20px 0;">
     <ins class="adsbygoogle"
       style="display:block"
@@ -88,6 +132,47 @@
     </script>
   </div>
 
+  <!-- Additional Ad Unit Example (optional) -->
+  <div style="text-align:center; margin:20px 0;">
+    <ins class="adsbygoogle"
+      style="display:block"
+      data-ad-client="ca-pub-2681103030876233"
+      data-ad-slot="7029227212"
+      data-ad-format="auto"></ins>
+    <script>
+      (adsbygoogle = window.adsbygoogle || []).push({});
+    </script>
+  </div>
+
   <script src="script.js" type="module"></script>
+  <script>
+    // Handle showing the dropdown for known categories or custom input based on the sort type
+    const sortTypeEl = document.getElementById('newsSortType');
+    const categoryDropdown = document.getElementById('newsCategoryDropdown');
+    const categoryInput = document.getElementById('newsCategoryInput');
+
+    sortTypeEl.addEventListener('change', function () {
+      if (sortTypeEl.value === 'category') {
+        categoryDropdown.style.display = '';
+        categoryInput.style.display = '';
+      } else {
+        categoryDropdown.style.display = 'none';
+        categoryInput.style.display = 'none';
+        categoryInput.value = '';
+        categoryDropdown.value = "";
+      }
+    });
+
+    // Only show text input if the user chooses 'Other' or blank in dropdown
+    categoryDropdown.addEventListener('change', function () {
+      if (categoryDropdown.value === 'Other' || categoryDropdown.value === '') {
+        categoryInput.style.display = '';
+      } else {
+        categoryInput.style.display = 'none';
+        categoryInput.value = '';
+      }
+    });
+  </script>
 </body>
+
 </html>

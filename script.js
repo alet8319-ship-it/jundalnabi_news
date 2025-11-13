@@ -17,30 +17,68 @@ const db = getFirestore(app);
 const urlParams = new URLSearchParams(window.location.search);
 const articleId = urlParams.get('id');
 
+// News sort and category input logic (with dropdown for known categories)
 const sortTypeEl = document.getElementById('newsSortType');
 const categoryInputEl = document.getElementById('newsCategoryInput');
+const categoryDropdownEl = document.getElementById('newsCategoryDropdown');
+
+// Predefined categories (match those in admin and index.html)
+const KNOWN_CATEGORIES = [
+  "World", "Pakistan", "Technology", "Religion",
+  "Health", "Finance", "Opinion", "Education", "Sports", "Other"
+];
+
+// Populate dropdown if not already in HTML (for JS dynamic category support)
+if (categoryDropdownEl && categoryDropdownEl.options.length <= 1) {
+  KNOWN_CATEGORIES.forEach(cat => {
+    const opt = document.createElement('option');
+    opt.value = cat;
+    opt.textContent = cat;
+    categoryDropdownEl.appendChild(opt);
+  });
+}
+
+// Show/hide appropriate category fields based on sort type and dropdown selection
 if (sortTypeEl) {
     sortTypeEl.addEventListener('change', () => {
         if (sortTypeEl.value === 'category') {
-            categoryInputEl.style.display = 'inline-block';
+            categoryDropdownEl && (categoryDropdownEl.style.display = '');
+            categoryInputEl && (categoryInputEl.style.display = '');
         } else {
-            categoryInputEl.style.display = 'none';
+            categoryDropdownEl && (categoryDropdownEl.style.display = 'none');
+            categoryInputEl && (categoryInputEl.style.display = 'none', categoryInputEl.value = '');
+            categoryDropdownEl && (categoryDropdownEl.value = "");
+        }
+        loadNews();
+    });
+}
+if (categoryDropdownEl) {
+    categoryDropdownEl.addEventListener('change', () => {
+        if (categoryDropdownEl.value === 'Other' || categoryDropdownEl.value === "") {
+            categoryInputEl && (categoryInputEl.style.display = '');
+        } else {
+            categoryInputEl && (categoryInputEl.style.display = 'none', categoryInputEl.value = '');
         }
         loadNews();
     });
 }
 if (categoryInputEl) {
     categoryInputEl.addEventListener('input', () => {
-        loadNews();
+        if ((sortTypeEl && sortTypeEl.value === 'category') &&
+            (categoryDropdownEl && (categoryDropdownEl.value === 'Other' || categoryDropdownEl.value === ""))) {
+            loadNews();
+        }
     });
 }
 
+// Initial load
 if (articleId) {
     loadSingleArticle(articleId);
 } else {
     loadNews();
 }
 
+// Load and display a single article
 async function loadSingleArticle(id) {
     const loadingEl = document.getElementById('loading');
     const newsContainer = document.getElementById('newsContainer');
@@ -50,7 +88,6 @@ async function loadSingleArticle(id) {
 
         if (docSnap.exists()) {
             await updateDoc(docRef, { views: increment(1) });
-
             const docSnapUpdated = await getDoc(docRef);
             const news = docSnapUpdated.data();
 
@@ -69,6 +106,7 @@ async function loadSingleArticle(id) {
     }
 }
 
+// Helper to get an image with a preferred fallback
 function getFirstImage(news, fallback) {
     if (Array.isArray(news.imageUrls) && news.imageUrls.length > 0) {
         return news.imageUrls[0];
@@ -77,6 +115,7 @@ function getFirstImage(news, fallback) {
         .find(url => typeof url === 'string' && url.trim().length > 0) || fallback;
 }
 
+// Update meta tags for SEO and social sharing
 function updatePageMeta(news, id) {
     const title = news.title || 'JundAlNabi News';
     const description = getCardDescription(news);
@@ -97,7 +136,7 @@ function updatePageMeta(news, id) {
     };
 
     setMeta('meta[name="description"]', 'content', description);
-    setMeta('meta[name="keywords"]', 'content', news.keywords || 'Gernal news, JundAlNabi, religion, global updates');
+    setMeta('meta[name="keywords"]', 'content', news.keywords?.join(', ') || 'General news, JundAlNabi, religion, global updates'); // Keywords
     setMeta('meta[property="og:title"]', 'content', title);
     setMeta('meta[property="og:description"]', 'content', description);
     setMeta('meta[property="og:image"]', 'content', image);
@@ -117,6 +156,7 @@ function updatePageMeta(news, id) {
     canonical.setAttribute('href', url);
 }
 
+// Add structured data/JSON-LD for SEO
 function addStructuredData(news, id) {
     const scriptId = 'structured-data';
     const existing = document.getElementById(scriptId);
@@ -146,6 +186,7 @@ function addStructuredData(news, id) {
             }
         },
         "description": description,
+        "keywords": news.keywords?.join(', ') || 'General news, JundAlNabi, religion, global updates',
         "mainEntityOfPage": {
             "@type": "WebPage",
             "@id": url
@@ -159,6 +200,7 @@ function addStructuredData(news, id) {
     document.head.appendChild(script);
 }
 
+// Render an article view (full page)
 function createArticleView(news) {
     const date = news.createdAt
         ? new Date(news.createdAt.seconds * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
@@ -199,6 +241,7 @@ function createArticleView(news) {
     `;
 }
 
+// Minimal markdown/emphasis formatting for article content
 function formatContent(content = '') {
     return content
         .replace(/^## (.+)$/gm, '<h2>$1</h2>')
@@ -210,29 +253,38 @@ function formatContent(content = '') {
         .replace(/\n/g, '<br>');
 }
 
-// --- Extract a plain text description for news cards ---
-// Prefer description field, else extract first paragraph or first 160 chars of plain text from HTML content
+// Generate short description for card/list views
 function getCardDescription(news) {
     if (news.description && typeof news.description === "string" && news.description.trim() !== "") {
         return news.description.trim();
     }
-    // Strip HTML and get first paragraph or fallback
     const div = document.createElement('div');
     div.innerHTML = news.content || '';
     let firstParagraph = div.querySelector('p');
     if (firstParagraph) {
         return firstParagraph.textContent.trim();
     }
-    // Fallback: strip all HTML and truncate
     return div.textContent.trim().substring(0, 160) + '...';
 }
 
-// --- Main News Algorithm ---
+// Main: load and render news feed/cards
 async function loadNews() {
     const loadingEl = document.getElementById('loading');
     const newsContainer = document.getElementById('newsContainer');
     const sortType = sortTypeEl ? sortTypeEl.value : 'latest';
-    const category = categoryInputEl ? categoryInputEl.value.trim() : "";
+
+    let category = "";
+    if (sortType === 'category') {
+        // Try dropdown first: if value present and not "Other"/blank, it wins
+        if (categoryDropdownEl && categoryDropdownEl.value && categoryDropdownEl.value !== "" && categoryDropdownEl.value !== "Other") {
+            category = categoryDropdownEl.value;
+        } else if (categoryInputEl) {
+            category = categoryInputEl.value.trim();
+        }
+    }
+
+    loadingEl.style.display = '';
+    newsContainer.innerHTML = '';
 
     try {
         let newsQuery;
@@ -243,12 +295,14 @@ async function loadNews() {
         } else if (sortType === 'popular') {
             newsQuery = query(collection(db, 'news'), orderBy('views', 'desc'), orderBy('createdAt', 'desc'));
         } else if (sortType === 'category' && category) {
-            newsQuery = query(collection(db, 'news'), orderBy('createdAt', 'desc'));
+            // Use Firestore WHERE for category filter
+            newsQuery = query(collection(db, 'news'), where('category', '==', category), orderBy('createdAt', 'desc'));
         } else {
             newsQuery = query(collection(db, 'news'), orderBy('createdAt', 'desc'));
         }
 
         const querySnapshot = await getDocs(newsQuery);
+
         loadingEl.style.display = 'none';
         newsContainer.innerHTML = '';
 
@@ -258,10 +312,6 @@ async function loadNews() {
             news.id = docSnap.id;
             newsList.push(news);
         });
-
-        if (sortType === 'category' && category) {
-            newsList = newsList.filter(news => news.category && news.category.toLowerCase() === category.toLowerCase());
-        }
 
         if (newsList.length === 0) {
             newsContainer.innerHTML = '<div class="no-news">Sorry we don`t found any Article yet report us for this bug.</div>';
@@ -273,10 +323,12 @@ async function loadNews() {
         });
     } catch (error) {
         console.error('Error loading news:', error);
+        loadingEl.style.display = 'none';
         loadingEl.innerHTML = '<div class="no-news">Failed to load news.</div>';
     }
 }
 
+// Card for news feed/list
 function createNewsCard(id, news) {
     const imageUrl = getFirstImage(news, 'https://via.placeholder.com/600x300?text=No+Image');
     const views = typeof news.views === "number" ? news.views : 0;
