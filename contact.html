@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Contact Us - JundAlNabi</title>
+
+    <!-- SEO Meta -->
+    <meta name="description" content="Contact JundAlNabi for questions, feedback, or support. We're here to help.">
+    <meta name="keywords" content="contact, support, jundalnabi, help, feedback">
+    <meta name="robots" content="index, follow">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Contact - JundAlNabi">
+    <meta property="og:description" content="Reach out for support, questions, or feedback.">
+    <meta property="og:image" content="https://www.codetoweb.tech/logo/logo.png">
+    <meta property="og:url" content="https://www.codetoweb.tech/contact.html">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://www.codetoweb.tech/contact.html">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="contact.css">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="logo/logo.ico" type="image/x-icon">
+
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+</head>
+
+<body>
+
+    <!-- ===== Navigation ===== -->
+    <nav>
+        <div class="logo">
+            <img src="logo/logo.png" alt="JundAlNabi Logo">
+            <h1>JundAlNabi</h1>
+        </div>
+
+        <i class="fa-solid fa-bars" id="menu_icon"></i>
+
+        <ul id="nav_bar">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About</a></li>
+            <li><a href="updates.html">Updates</a></li>
+            <li><a href="contact.html" class="active">Contact</a></li>
+        </ul>
+    </nav>
+
+    <!-- ===== Contact Header ===== -->
+    <section class="contact-header">
+        <h2>Contact Us</h2>
+        <p>Have a question or feedback? We're here to help.</p>
+    </section>
+
+    <!-- ===== Contact Section ===== -->
+    <section class="contact-container">
+
+        <!-- Contact Info -->
+        <div class="contact-info">
+            <h3>Get in touch</h3>
+            <p><i class="fa-solid fa-envelope"></i> Email: support@codetoweb.tech</p>
+            <p><i class="fa-solid fa-location-dot"></i> Location: Pakistan</p>
+            <p><i class="fa-solid fa-globe"></i> Website: www.codetoweb.tech</p>
+        </div>
+
+        <!-- Contact Form -->
+      <form action="https://formspree.io/f/meonodnp" method="POST" id="contact-form">
+    <label>
+        Your Name:
+        <input type="text" name="name" required>
+    </label>
+
+    <label>
+        Your Email:
+        <input type="email" name="email" required>
+    </label>
+
+    <label>
+        Message:
+        <textarea name="message" required></textarea>
+    </label>
+
+    <button type="submit">Send Message</button>
+</form>
+
+
+    </section>
+
+    <!-- ===== Footer ===== -->
+    <footer>
+        © 2025 JundAlNabi. All Rights Reserved.
+    </footer>
+
+    <script src="contact.js"></script>
+
+</body>
+</html>

@@ -1,59 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="y8soujAfiVOxgpv8d015zmpAYej7kk7nFdfyYz3Ab1c" />
-    <title>About - JundAlNabi</title>
+
+    <!-- Page Meta -->
+    <title>About Us - JundAlNabi</title>
+    <meta name="description" content="Learn about JundAlNabi, our mission, our vision, and how we deliver verified daily news with accuracy and transparency.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://www.codetoweb.tech/about.html">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="About Us - JundAlNabi">
+    <meta property="og:description" content="Discover our mission and vision at JundAlNabi – your trusted source for verified daily news.">
+    <meta property="og:image" content="https://www.codetoweb.tech/logo/logo.png">
+    <meta property="og:url" content="https://www.codetoweb.tech/about.html">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter -->
+    <meta name="twitter:title" content="About Us - JundAlNabi">
+    <meta name="twitter:description" content="Learn about our news platform, mission, and vision.">
+    <meta name="twitter:image" content="https://www.codetoweb.tech/logo/logo.png">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <!-- Google Verification -->
+    <meta name="google-site-verification" content="y8soujAfiVOxgpv8d015zmpAYej7kk7nFdfyYz3Ab1c">
+
+    <!-- Structured Data (Google Schema) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "AboutPage",
+      "name": "About JundAlNabi",
+      "url": "https://www.codetoweb.tech/about.html",
+      "mainEntity": {
+        "@type": "Organization",
+        "name": "JundAlNabi",
+        "logo": "https://www.codetoweb.tech/logo/logo.png",
+        "url": "https://www.codetoweb.tech/",
+        "description": "A digital news platform providing verified, unbiased and updated news.",
+        "sameAs": [
+            "https://www.codetoweb.tech/"
+        ]
+      }
+    }
+    </script>
+
+    <!-- Styles -->
     <link rel="stylesheet" href="style.css">
+
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+    <!-- Favicon -->
     <link rel="shortcut icon" href="logo/logo.ico" type="image/x-icon">
 </head>
+
 <body>
     <header>
         <nav>
             <div class="logo">
-                <img src="logo/logo.png" alt="jundalnabi">
+                <img src="logo/logo.png" alt="JundAlNabi Logo">
                 <h1>JundAlNabi</h1>
             </div>
+
             <ul id="nav_bar">
                 <li><a href="index.html">Home</a></li>
-                <li><a href="#about">About</a></li>
-                <li><a href="#marker">Marker</a></li>
+                <li><a href="about.html" class="active">About</a></li>
                 <li><a href="updates.html">Updates</a></li>
+                <li><a href="#marker">Contact</a></li>
             </ul>
-            <i id="menu_bar" class="fa-solid fa-ellipsis-vertical"></i>
+
+            <button id="menu_bar" aria-label="Menu">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
         </nav>
     </header>
-    <section class="about-section">
-  <h2>About Us</h2>
-  <h3>We also Launch API you can use it, to get daily news form our site!</h3>
-  <p>
-    Welcome to our news platform built with passion and precision. 
-    Inspired by the clarity and simplicity, 
-    our goal is to deliver stories that matter, beautifully presented.
-  </p>
 
-  <div class="about-card">
-    <h3>Our Mission</h3>
-    <p>
-      We aim to provide verified, unbiased, and timely updates on the topics
-      that shape our world. Our focus is on accuracy, transparency, and trust.
-    </p>
-  </div>
+    <section class="about-section" id="about">
+        <h2>About Us</h2>
 
-  <div class="about-card">
-    <h3>Our Vision</h3>
-    <p>
-      To become the most reliable and visually elegant source for digital news
-      combining technology and design to make reading effortless and enjoyable.
-    </p>
-  </div>
+        <p>
+            JundAlNabi is a modern news platform built to deliver fast, verified,
+            and clear information. We publish daily updates across multiple
+            categories including world news, technology, health, education,
+            finance and more.
+        </p>
 
-  <div class="about-footer">
-    © 2025 News Portal. All Rights Reserved.
-  </div>
-</section>
+        <h3>Our Mission</h3>
+        <div class="about-card">
+            <p>
+                We aim to provide reliable and unbiased news while keeping
+                accuracy, transparency and trust at the center of everything we publish.
+            </p>
+        </div>
 
-    
+        <h3>Our Vision</h3>
+        <div class="about-card">
+            <p>
+                Our goal is to become one of the most trusted and reader-friendly
+                digital news platforms. We blend clean design with technology to
+                make information easy and enjoyable to read.
+            </p>
+        </div>
+
+        <h3>API Access</h3>
+        <div class="about-card">
+            <p>
+                We also offer an API that allows developers to access daily news
+                programmatically. More details will be published soon.
+            </p>
+        </div>
+
+        <div class="about-footer">
+            © 2025 JundAlNabi. All Rights Reserved.
+        </div>
+    </section>
+
 </body>
 </html>

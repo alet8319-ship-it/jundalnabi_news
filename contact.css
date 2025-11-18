@@ -1,0 +1,279 @@
+/* ===== CSS Variables ===== */
+:root {
+  --primary-color: #d7dbe0;
+  --accent-color: #007aff;
+  --text-light: #fff;
+  --text-dark: #333;
+  --bg-light: #f2f2f7;
+  --border-light: #c8c7cc;
+  --card-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== Base ===== */
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background: var(--bg-light);
+  color: var(--text-dark);
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+/* ===== Navigation ===== */
+nav {
+  background: linear-gradient(to bottom, #fefefe 0%, #d7dbe0 100%);
+  border-bottom: 1px solid var(--border-light);
+  box-shadow: inset 0 1px 0 #fff, 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 1.2rem;
+  position: relative;
+  z-index: 1000;
+}
+
+nav .logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+nav .logo img {
+  height: 35px;
+}
+
+nav .logo h1 {
+  font-size: 1.2rem;
+  color: #111;
+  margin: 0;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+nav ul li a {
+  text-decoration: none;
+  color: var(--accent-color);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+nav ul li a:hover,
+nav ul li a.active {
+  text-decoration: underline;
+}
+
+#menu_icon {
+  display: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+/* ===== Header Section ===== */
+.contact-header,
+.privacy-header,
+.contact-container h2 {
+  text-align: center;
+  padding: 3rem 1rem 2rem;
+  color: var(--accent-color);
+}
+
+.contact-header h2,
+.privacy-header h2,
+.contact-container h2 {
+  font-size: 2rem;
+  margin: 0 0 0.5rem;
+}
+
+.contact-header p,
+.privacy-header p {
+  font-size: 1rem;
+  color: #555;
+}
+
+/* ===== Containers ===== */
+.contact-container,
+.privacy-container {
+  max-width: 900px;
+  margin: 0 auto 3rem;
+  background: #fff;
+  border: 1px solid var(--border-light);
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+  padding: 2rem;
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  flex-direction: column;
+}
+
+/* ===== Info Sections ===== */
+.contact-info,
+.privacy-info {
+  flex: 1;
+  min-width: 260px;
+  padding-right: 1rem;
+}
+
+.contact-info h3,
+.privacy-info h3 {
+  margin-top: 0;
+  color: var(--accent-color);
+  font-size: 1.3rem;
+}
+
+.contact-info p,
+.privacy-info p {
+  font-size: 0.95rem;
+  color: #444;
+  margin: 0.6rem 0;
+}
+
+.contact-info i {
+  color: var(--accent-color);
+  margin-right: 0.5rem;
+}
+
+/* ===== Contact Form ===== */
+#contact-form {
+  flex: 1;
+  min-width: 260px;
+  padding-left: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+#contact-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+}
+
+#contact-form input,
+#contact-form textarea {
+  margin-top: 0.3rem;
+  padding: 0.7rem;
+  border: 1px solid var(--border-light);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  outline: none;
+  background: var(--bg-light);
+  resize: vertical;
+}
+
+#contact-form textarea {
+  min-height: 140px;
+}
+
+#contact-form button {
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  padding: 0.7rem 1.2rem;
+  background: var(--accent-color);
+  color: var(--text-light);
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 600;
+  box-shadow: var(--card-shadow);
+  transition: opacity 0.2s;
+}
+
+#contact-form button:hover {
+  opacity: 0.9;
+}
+
+/* ===== Privacy Policy Styling ===== */
+.contact-container ul,
+.privacy-container ul {
+  margin: 0.5rem 0 1rem 1.5rem;
+  padding: 0;
+  list-style-type: disc;
+}
+
+.contact-container li,
+.privacy-container li {
+  margin-bottom: 0.5rem;
+}
+
+.contact-container a,
+.privacy-container a {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+
+.contact-container a:hover,
+.privacy-container a:hover {
+  opacity: 0.8;
+}
+
+.contact-container h3,
+.privacy-container h3 {
+  margin-top: 1.5rem;
+  color: var(--accent-color);
+  font-size: 1.2rem;
+}
+
+/* ===== Footer ===== */
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  color: #777;
+  font-size: 0.9rem;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  nav ul {
+    display: none;
+    flex-direction: column;
+    background: #fff;
+    position: absolute;
+    top: 60px;
+    right: 10px;
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 1rem;
+    width: 200px;
+    box-shadow: var(--card-shadow);
+  }
+
+  nav ul.active {
+    display: flex;
+  }
+
+  #menu_icon {
+    display: block;
+  }
+
+  .contact-container,
+  .privacy-container {
+    margin: 1rem;
+    padding: 1.2rem;
+  }
+
+  .contact-info,
+  #contact-form,
+  .privacy-info {
+    min-width: 100%;
+    padding: 0;
+  }
+
+  .contact-header h2,
+  .privacy-header h2,
+  .contact-container h2 {
+    font-size: 1.6rem;
+  }
+
+  .privacy-container h3,
+  .contact-container h3 {
+    font-size: 1.1rem;
+  }
+}
