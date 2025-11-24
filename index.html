@@ -39,19 +39,24 @@
 
   <header>
     <nav>
-      <div class="logo">
+      <a href="index.html" class="logo">
         <img src="logo/logo.png" alt="JundAlNabi Logo" loading="lazy" />
         <h1>JundAlNabi</h1>
-      </div>
+      </a>
       <ul id="nav_bar">
-        <li><a href="#home">Home</a></li>
+        <li><a href="index.html" class="active">Home</a></li>
         <li><a href="about.html">About</a></li>
         <li><a href="updates.html">Updates</a></li>
         <li><a href="contact.html">Contact</a></li>
       </ul>
-      <button id="menu_bar" aria-label="Menu">
-        <i class="fa-solid fa-ellipsis-vertical"></i>
-      </button>
+      <div class="nav-actions">
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <button id="menu_bar" aria-label="Menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
     </nav>
   </header>
 
@@ -77,8 +82,8 @@
       <option value="Other">Other</option>
     </select>
 
-    <input type="text" id="newsCategoryInput" placeholder="Or type category..." style="display:none;"
-      autocomplete="off" aria-label="Category name" />
+    <input type="text" id="newsCategoryInput" placeholder="Or type category..." style="display:none;" autocomplete="off"
+      aria-label="Category name" />
   </div>
 
   <main>
@@ -90,34 +95,9 @@
     <div id="loading" class="loading">
       <i class="fa-solid fa-spinner fa-spin"></i> Loading news...
     </div>
-    <script type='text/javascript' src='//pl28098291.effectivegatecpm.com/a7/75/41/a77541f2b8873d077f99cc1a7fe6882f.js'></script>
-    <script type="text/javascript">
-	atOptions = {
-		'key' : '52335d9a39e27faa82fa09cd26a5ae8d',
-		'format' : 'iframe',
-		'height' : 60,
-		'width' : 468,
-		'params' : {}
-	};
-</script>
-<script type="text/javascript" src="//www.highperformanceformat.com/52335d9a39e27faa82fa09cd26a5ae8d/invoke.js"></script>
-
     <div id="newsContainer" class="news-container"></div>
   </main>
 
-  <!-- AdSierra Ad Code -->
-  <div style="text-align:center; margin:20px 0;">
-    <script type="text/javascript">
-      atOptions = {
-        'key': '52335d9a39e27faa82fa09cd26a5ae8d',
-        'format': 'iframe',
-        'height': 60,
-        'width': 468,
-        'params': {}
-      };
-    </script>
-    <script type="text/javascript" src="//www.highperformanceformat.com/52335d9a39e27faa82fa09cd26a5ae8d/invoke.js"></script>
-  </div>
 
   <script src="script.js" type="module"></script>
 

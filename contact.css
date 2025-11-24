@@ -1,86 +1,10 @@
-/* ===== CSS Variables ===== */
-:root {
-  --primary-color: #d7dbe0;
-  --accent-color: #007aff;
-  --text-light: #fff;
-  --text-dark: #333;
-  --bg-light: #f2f2f7;
-  --border-light: #c8c7cc;
-  --card-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
-}
-
-/* ===== Base ===== */
-body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background: var(--bg-light);
-  color: var(--text-dark);
-  margin: 0;
-  padding: 0;
-  line-height: 1.6;
-}
-
-/* ===== Navigation ===== */
-nav {
-  background: linear-gradient(to bottom, #fefefe 0%, #d7dbe0 100%);
-  border-bottom: 1px solid var(--border-light);
-  box-shadow: inset 0 1px 0 #fff, 0 1px 3px rgba(0, 0, 0, 0.1);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.8rem 1.2rem;
-  position: relative;
-  z-index: 1000;
-}
-
-nav .logo {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-nav .logo img {
-  height: 35px;
-}
-
-nav .logo h1 {
-  font-size: 1.2rem;
-  color: #111;
-  margin: 0;
-}
-
-nav ul {
-  list-style: none;
-  display: flex;
-  gap: 1rem;
-  margin: 0;
-  padding: 0;
-}
-
-nav ul li a {
-  text-decoration: none;
-  color: var(--accent-color);
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-nav ul li a:hover,
-nav ul li a.active {
-  text-decoration: underline;
-}
-
-#menu_icon {
-  display: none;
-  font-size: 1.4rem;
-  cursor: pointer;
-}
-
 /* ===== Header Section ===== */
 .contact-header,
 .privacy-header,
 .contact-container h2 {
   text-align: center;
   padding: 3rem 1rem 2rem;
-  color: var(--accent-color);
+  color: var(--primary-color);
 }
 
 .contact-header h2,
@@ -93,7 +17,7 @@ nav ul li a.active {
 .contact-header p,
 .privacy-header p {
   font-size: 1rem;
-  color: #555;
+  color: var(--text-muted);
 }
 
 /* ===== Containers ===== */
@@ -101,10 +25,10 @@ nav ul li a.active {
 .privacy-container {
   max-width: 900px;
   margin: 0 auto 3rem;
-  background: #fff;
-  border: 1px solid var(--border-light);
-  border-radius: 12px;
-  box-shadow: var(--card-shadow);
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
   padding: 2rem;
   display: flex;
   gap: 2rem;
@@ -123,19 +47,19 @@ nav ul li a.active {
 .contact-info h3,
 .privacy-info h3 {
   margin-top: 0;
-  color: var(--accent-color);
+  color: var(--primary-color);
   font-size: 1.3rem;
 }
 
 .contact-info p,
 .privacy-info p {
   font-size: 0.95rem;
-  color: #444;
+  color: var(--text-main);
   margin: 0.6rem 0;
 }
 
 .contact-info i {
-  color: var(--accent-color);
+  color: var(--primary-color);
   margin-right: 0.5rem;
 }
 
@@ -159,11 +83,12 @@ nav ul li a.active {
 #contact-form textarea {
   margin-top: 0.3rem;
   padding: 0.7rem;
-  border: 1px solid var(--border-light);
-  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
   font-size: 0.95rem;
   outline: none;
-  background: var(--bg-light);
+  background: var(--bg-body);
+  color: var(--text-main);
   resize: vertical;
 }
 
@@ -175,14 +100,14 @@ nav ul li a.active {
   align-self: flex-start;
   margin-top: 0.5rem;
   padding: 0.7rem 1.2rem;
-  background: var(--accent-color);
-  color: var(--text-light);
+  background: var(--primary-color);
+  color: #fff;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   font-size: 1rem;
   cursor: pointer;
   font-weight: 600;
-  box-shadow: var(--card-shadow);
+  box-shadow: var(--shadow-sm);
   transition: opacity 0.2s;
 }
 
@@ -205,7 +130,7 @@ nav ul li a.active {
 
 .contact-container a,
 .privacy-container a {
-  color: var(--accent-color);
+  color: var(--primary-color);
   text-decoration: underline;
 }
 
@@ -217,7 +142,7 @@ nav ul li a.active {
 .contact-container h3,
 .privacy-container h3 {
   margin-top: 1.5rem;
-  color: var(--accent-color);
+  color: var(--primary-color);
   font-size: 1.2rem;
 }
 
@@ -225,33 +150,12 @@ nav ul li a.active {
 footer {
   text-align: center;
   padding: 1.5rem;
-  color: #777;
+  color: var(--text-muted);
   font-size: 0.9rem;
 }
 
 /* ===== Responsive ===== */
 @media (max-width: 768px) {
-  nav ul {
-    display: none;
-    flex-direction: column;
-    background: #fff;
-    position: absolute;
-    top: 60px;
-    right: 10px;
-    border: 1px solid var(--border-light);
-    border-radius: 8px;
-    padding: 1rem;
-    width: 200px;
-    box-shadow: var(--card-shadow);
-  }
-
-  nav ul.active {
-    display: flex;
-  }
-
-  #menu_icon {
-    display: block;
-  }
 
   .contact-container,
   .privacy-container {
