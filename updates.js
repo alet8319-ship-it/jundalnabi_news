@@ -50,7 +50,7 @@ function renderUpdates(list) {
     div.innerHTML = `
       <span class="update-badge">${update.category}</span>
       <h3>${update.title}</h3>
-      <small>${new Date(update.date).toLocaleDateString()}</small>
+      <small>${new Date(update.createdAt).toLocaleDateString()}</small>
       <p>${update.description}</p>
     `;
     container.appendChild(div);
@@ -60,9 +60,9 @@ function renderUpdates(list) {
 function applyFilters() {
   let sorted = [...updates];
   if (sortSelect.value === "latest") {
-    sorted.sort((a, b) => new Date(b.date) - new Date(a.date));
+    sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
   } else {
-    sorted.sort((a, b) => new Date(a.date) - new Date(b.date));
+    sorted.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
   }
   const query = searchInput.value.toLowerCase();
   const filtered = sorted.filter(u =>
@@ -81,7 +81,4 @@ setTimeout(() => {
   renderUpdates(updates);
 }, 800);
 
-// Mobile menu
-const menuIcon = document.getElementById("menu_icon");
-const navBar = document.getElementById("nav_bar");
-menuIcon.addEventListener("click", () => navBar.classList.toggle("active"));
+// Mobile menu handled by script.js

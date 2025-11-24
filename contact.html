@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,6 +22,7 @@
     <link rel="canonical" href="https://www.codetoweb.tech/contact.html">
 
     <!-- CSS -->
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="contact.css">
 
     <!-- Icons -->
@@ -34,69 +36,78 @@
 
 <body>
 
-    <!-- ===== Navigation ===== -->
-    <nav>
-        <div class="logo">
-            <img src="logo/logo.png" alt="JundAlNabi Logo">
-            <h1>JundAlNabi</h1>
-        </div>
+    <header>
+        <nav>
+            <a href="index.html" class="logo">
+                <img src="logo/logo.png" alt="JundAlNabi Logo" loading="lazy" />
+                <h1>JundAlNabi</h1>
+            </a>
+            <ul id="nav_bar">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="updates.html">Updates</a></li>
+                <li><a href="contact.html" class="active">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button id="menu_bar" aria-label="Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
 
-        <i class="fa-solid fa-bars" id="menu_icon"></i>
+    <main>
+        <!-- ===== Contact Header ===== -->
+        <section class="contact-header">
+            <h2>Contact Us</h2>
+            <p>Have a question or feedback? We're here to help.</p>
+        </section>
 
-        <ul id="nav_bar">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="about.html">About</a></li>
-            <li><a href="updates.html">Updates</a></li>
-            <li><a href="contact.html" class="active">Contact</a></li>
-        </ul>
-    </nav>
+        <!-- ===== Contact Section ===== -->
+        <section class="contact-container">
 
-    <!-- ===== Contact Header ===== -->
-    <section class="contact-header">
-        <h2>Contact Us</h2>
-        <p>Have a question or feedback? We're here to help.</p>
-    </section>
+            <!-- Contact Info -->
+            <div class="contact-info">
+                <h3>Get in touch</h3>
+                <p><i class="fa-solid fa-envelope"></i> Email: support@codetoweb.tech</p>
+                <p><i class="fa-solid fa-location-dot"></i> Location: Pakistan</p>
+                <p><i class="fa-solid fa-globe"></i> Website: www.codetoweb.tech</p>
+            </div>
 
-    <!-- ===== Contact Section ===== -->
-    <section class="contact-container">
+            <!-- Contact Form -->
+            <form action="https://formspree.io/f/meonodnp" method="POST" id="contact-form">
+                <label>
+                    Your Name:
+                    <input type="text" name="name" required>
+                </label>
 
-        <!-- Contact Info -->
-        <div class="contact-info">
-            <h3>Get in touch</h3>
-            <p><i class="fa-solid fa-envelope"></i> Email: support@codetoweb.tech</p>
-            <p><i class="fa-solid fa-location-dot"></i> Location: Pakistan</p>
-            <p><i class="fa-solid fa-globe"></i> Website: www.codetoweb.tech</p>
-        </div>
+                <label>
+                    Your Email:
+                    <input type="email" name="email" required>
+                </label>
 
-        <!-- Contact Form -->
-      <form action="https://formspree.io/f/meonodnp" method="POST" id="contact-form">
-    <label>
-        Your Name:
-        <input type="text" name="name" required>
-    </label>
+                <label>
+                    Message:
+                    <textarea name="message" required></textarea>
+                </label>
 
-    <label>
-        Your Email:
-        <input type="email" name="email" required>
-    </label>
+                <button type="submit">Send Message</button>
+            </form>
 
-    <label>
-        Message:
-        <textarea name="message" required></textarea>
-    </label>
-
-    <button type="submit">Send Message</button>
-</form>
-
-
-    </section>
+        </section>
+    </main>
 
     <!-- ===== Footer ===== -->
     <footer>
         © 2025 JundAlNabi. All Rights Reserved.
     </footer>
 
+    <script src="script.js" type="module"></script>
     <script src="contact.js"></script>
 
 </body>
+
 </html>

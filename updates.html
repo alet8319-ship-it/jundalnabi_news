@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Latest News Updates - JundAlNabi</title>
 
   <!-- SEO -->
-  <meta name="description" content="Read the latest verified news, updates, and reports. Updated daily with fresh content.">
+  <meta name="description"
+    content="Read the latest verified news, updates, and reports. Updated daily with fresh content.">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://yourwebsite.com/updates.html">
 
@@ -17,24 +19,35 @@
   <meta property="og:image" content="https://yourwebsite.com/logo.png">
 
   <!-- CSS -->
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="updates.css">
   <script src="https://kit.fontawesome.com/a2e0f1f5d4.js" crossorigin="anonymous"></script>
 </head>
+
 <body>
 
-  <nav>
-    <div class="logo">
-      <img src="logo/logo.png" alt="Logo">
-      <h1>JundAlNabi News</h1>
-    </div>
-    <i class="fa-solid fa-bars" id="menu_icon"></i>
-    <ul id="nav_bar">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="about.html">About</a></li>
-      <li><a href="#marker">Marker</a></li>
-      <li><a href="#updates">Updates</a></li>
-    </ul>
-  </nav>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">
+        <img src="logo/logo.png" alt="JundAlNabi Logo" loading="lazy" />
+        <h1>JundAlNabi</h1>
+      </a>
+      <ul id="nav_bar">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="updates.html" class="active">Updates</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <button id="menu_bar" aria-label="Menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </nav>
+  </header>
 
   <main>
     <section class="hero">
@@ -54,6 +67,8 @@
     <p id="loadingMsg">Loading updates...</p>
   </main>
 
+  <script src="script.js" type="module"></script>
   <script src="updates.js"></script>
 </body>
+
 </html>

@@ -1,13 +1,4 @@
-// Toggle mobile menu
-const menu = document.getElementById('menu_icon');
-const nav = document.getElementById('nav_bar');
-
-menu.addEventListener('click', () => nav.classList.toggle('active'));
-document.addEventListener('click', (e) => {
-    if (!menu.contains(e.target) && !nav.contains(e.target)) {
-        nav.classList.remove('active');
-    }
-});
+// Mobile menu handled by script.js
 
 // ===== EmailJS Integration =====
 // Make sure to include EmailJS SDK in HTML:
@@ -29,11 +20,11 @@ form.addEventListener('submit', function (e) {
         from_email: email,
         message: message
     })
-    .then(() => {
-        alert("Message sent successfully!");
-        form.reset();
-    }, (err) => {
-        alert("Failed to send message. Please try again later.");
-        console.error(err);
-    });
+        .then(() => {
+            alert("Message sent successfully!");
+            form.reset();
+        }, (err) => {
+            alert("Failed to send message. Please try again later.");
+            console.error(err);
+        });
 });

@@ -7,14 +7,16 @@
 
     <!-- Page Meta -->
     <title>About Us - JundAlNabi</title>
-    <meta name="description" content="Learn about JundAlNabi, our mission, our vision, and how we deliver verified daily news with accuracy and transparency.">
+    <meta name="description"
+        content="Learn about JundAlNabi, our mission, our vision, and how we deliver verified daily news with accuracy and transparency.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://www.codetoweb.tech/about.html">
 
     <!-- Open Graph -->
     <meta property="og:title" content="About Us - JundAlNabi">
-    <meta property="og:description" content="Discover our mission and vision at JundAlNabi – your trusted source for verified daily news.">
+    <meta property="og:description"
+        content="Discover our mission and vision at JundAlNabi – your trusted source for verified daily news.">
     <meta property="og:image" content="https://www.codetoweb.tech/logo/logo.png">
     <meta property="og:url" content="https://www.codetoweb.tech/about.html">
     <meta property="og:type" content="website">
@@ -61,63 +63,71 @@
 <body>
     <header>
         <nav>
-            <div class="logo">
-                <img src="logo/logo.png" alt="JundAlNabi Logo">
+            <a href="index.html" class="logo">
+                <img src="logo/logo.png" alt="JundAlNabi Logo" loading="lazy" />
                 <h1>JundAlNabi</h1>
-            </div>
-
+            </a>
             <ul id="nav_bar">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="about.html" class="active">About</a></li>
                 <li><a href="updates.html">Updates</a></li>
-                <li><a href="#marker">Contact</a></li>
+                <li><a href="contact.html">Contact</a></li>
             </ul>
-
-            <button id="menu_bar" aria-label="Menu">
-                <i class="fa-solid fa-ellipsis-vertical"></i>
-            </button>
+            <div class="nav-actions">
+                <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+                <button id="menu_bar" aria-label="Menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
         </nav>
     </header>
 
-    <section class="about-section" id="about">
-        <h2>About Us</h2>
+    <main>
+        <section class="about-section" id="about">
+            <h2>About Us</h2>
 
-        <p>
-            JundAlNabi is a modern news platform built to deliver fast, verified,
-            and clear information. We publish daily updates across multiple
-            categories including world news, technology, health, education,
-            finance and more.
-        </p>
-
-        <h3>Our Mission</h3>
-        <div class="about-card">
             <p>
-                We aim to provide reliable and unbiased news while keeping
-                accuracy, transparency and trust at the center of everything we publish.
+                JundAlNabi is a modern news platform built to deliver fast, verified,
+                and clear information. We publish daily updates across multiple
+                categories including world news, technology, health, education,
+                finance and more.
             </p>
-        </div>
 
-        <h3>Our Vision</h3>
-        <div class="about-card">
-            <p>
-                Our goal is to become one of the most trusted and reader-friendly
-                digital news platforms. We blend clean design with technology to
-                make information easy and enjoyable to read.
-            </p>
-        </div>
+            <h3>Our Mission</h3>
+            <div class="about-card">
+                <p>
+                    We aim to provide reliable and unbiased news while keeping
+                    accuracy, transparency and trust at the center of everything we publish.
+                </p>
+            </div>
 
-        <h3>API Access</h3>
-        <div class="about-card">
-            <p>
-                We also offer an API that allows developers to access daily news
-                programmatically. More details will be published soon.
-            </p>
-        </div>
+            <h3>Our Vision</h3>
+            <div class="about-card">
+                <p>
+                    Our goal is to become one of the most trusted and reader-friendly
+                    digital news platforms. We blend clean design with technology to
+                    make information easy and enjoyable to read.
+                </p>
+            </div>
 
-        <div class="about-footer">
-            © 2025 JundAlNabi. All Rights Reserved.
-        </div>
-    </section>
+            <h3>API Access</h3>
+            <div class="about-card">
+                <p>
+                    We also offer an API that allows developers to access daily news
+                    programmatically. More details will be published soon.
+                </p>
+            </div>
+
+            <div class="about-footer">
+                © 2025 JundAlNabi. All Rights Reserved.
+            </div>
+        </section>
+    </main>
+
+    <script src="script.js" type="module"></script>
 
 </body>
+
 </html>
