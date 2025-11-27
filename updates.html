@@ -55,16 +55,18 @@
       <p>Freshly updated news from trusted sources.</p>
     </section>
 
-    <div class="news-sort-selector">
-      <select id="sortSelect">
-        <option value="latest">Sort by: Latest</option>
-        <option value="oldest">Oldest</option>
-      </select>
-      <input type="text" id="searchInput" placeholder="Search updates...">
-    </div>
+    <section class="updates-wrapper">
+      <div class="news-sort-selector">
+        <select id="sortSelect">
+          <option value="latest">Sort by: Latest</option>
+          <option value="oldest">Oldest</option>
+        </select>
+        <input type="text" id="searchInput" placeholder="Search updates...">
+      </div>
 
-    <div id="updatesContainer" class="news-container"></div>
-    <p id="loadingMsg">Loading updates...</p>
+      <div id="updatesContainer" class="updates-list"></div>
+      <p id="loadingMsg" class="updates-loading">Loading updates...</p>
+    </section>
   </main>
 
   <script src="script.js" type="module"></script>
