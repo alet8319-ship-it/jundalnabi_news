@@ -426,9 +426,15 @@ main {
     border-radius: var(--radius-lg);
     padding: 3rem;
     box-shadow: var(--shadow-sm);
-    max-width: 800px;
+    width: 800px;
     margin: 0 auto;
     border: 1px solid var(--border-color);
+}
+
+@media screen and (max-width: 800px) {
+    .article-full {
+        width: 100%;
+    }
 }
 
 .back-btn {
