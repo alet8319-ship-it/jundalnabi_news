@@ -14,9 +14,6 @@ import {
     startAfter
 } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-/**
- * Configuration & Constants
- */
 const Config = {
     firebase: {
         apiKey: "AIzaSyA1kGDOAuQRqdgXHX3Ugjj_zL7_bqYXos0",
@@ -46,10 +43,6 @@ const debounce = (fn, wait = 300) => {
     };
 };
 
-/**
- * Theme Manager
- * Handles Light/Dark mode toggling and persistence
- */
 class ThemeManager {
     constructor() {
         this.themeToggleBtn = document.getElementById('themeToggle');
@@ -88,10 +81,6 @@ class ThemeManager {
     }
 }
 
-/**
- * UI Manager
- * Handles Toast notifications, Loading states, and general UI interactions
- */
 class UIManager {
     constructor() {
         this.loadingEl = document.getElementById('loading');
@@ -214,7 +203,6 @@ class NewsApp {
         this.ui = new UIManager();
         this.themeManager = new ThemeManager();
 
-        // DOM Elements
         this.sortTypeEl = document.getElementById('newsSortType');
         this.categoryInputEl = document.getElementById('newsCategoryInput');
         this.categoryDropdownEl = document.getElementById('newsCategoryDropdown');
@@ -248,7 +236,6 @@ class NewsApp {
     }
 
     setupEventListeners() {
-        // Sort Type Change
         if (this.sortTypeEl) {
             this.sortTypeEl.addEventListener('change', () => {
                 this.handleSortChange();
@@ -256,7 +243,6 @@ class NewsApp {
             });
         }
 
-        // Category Dropdown Change
         if (this.categoryDropdownEl) {
             this.categoryDropdownEl.addEventListener('change', () => {
                 this.handleCategoryDropdownChange();
@@ -266,19 +252,16 @@ class NewsApp {
             });
         }
 
-        // Category Input Change
         if (this.categoryInputEl) {
             this.categoryInputEl.addEventListener('input', () => {
                 this.categoryInputHandler();
             });
         }
 
-        // Load more
         if (this.loadMoreBtn) {
             this.loadMoreBtn.addEventListener('click', () => this.loadNews());
         }
 
-        // Mobile Menu
         const menu = document.getElementById('menu_bar');
         const nav = document.getElementById('nav_bar');
         if (menu && nav) {
@@ -536,7 +519,7 @@ class NewsApp {
         }
 
         if (full) {
-            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
         }
 
         const now = new Date();
@@ -629,7 +612,7 @@ class NewsApp {
             "dateModified": dateModified,
             "author": [{
                 "@type": "Person",
-                "name": news.author || "JundAlNabi Team",
+                "name": news.author || "Team JundAlNabi",
                 "url": "https://www.codetoweb.tech/"
             }],
             "publisher": {
@@ -743,6 +726,5 @@ class HeroTypewriter {
     }
 }
 
-// Initialize App
 window.newsApp = new NewsApp();
 window.heroTypewriter = new HeroTypewriter(document.querySelector('.hero-typewriter'));

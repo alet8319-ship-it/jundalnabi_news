@@ -2,16 +2,16 @@ const updates = [
   {
     "title": "Performance Improvements",
     "description": "The website now loads 30% faster with optimized images and scripts.",
-    "content": "<p>We optimized image delivery, enabled better caching and split large scripts to improve load times. These changes reduce time-to-interactive and improve overall responsiveness.</p>",
-    "author": "Admin",
+    "content": "We optimized image delivery, enabled better caching and split large scripts to improve load times. These changes reduce time-to-interactive and improve overall responsiveness.",
+    "author": "@Admin",
     "category": "Improvement",
     "imageUrls": [
-      "https://example.com/uploads/perf-graph.png"
+      "https://codetoweb.tech/logo/logo.png"
     ],
     "keywords": [
       "performance",
-      "optimization",
-      "images"
+      " optimization",
+      " images"
     ],
     "views": 0,
     "createdAt": "2025-10-20T00:00:00.000Z"
@@ -19,17 +19,32 @@ const updates = [
   {
     "title": "Bug Fixes",
     "description": "Fixed several small issues on the contact form and navigation menu.",
-    "content": "<p>Addressed issues causing form validation errors on some browsers and fixed a navigation bug that caused incorrect highlighting for active links. Miscellaneous CSS fixes included.</p>",
-    "author": "Admin",
+    "content": "Addressed issues causing form validation errors on some browsers and fixed a navigation bug that caused incorrect highlighting for active links. Miscellaneous CSS fixes included.",
+    "author": "@Admin",
     "category": "Maintenance",
     "imageUrls": [],
     "keywords": [
       "bugfix",
-      "maintenance",
-      "contact form"
+      " maintenance",
+      " contact form"
     ],
     "views": 0,
     "createdAt": "2025-10-10T00:00:00.000Z"
+  },
+  {
+    "title": "Improvements",
+    "description": "Make Some improvements we make on some pages that not shows full info",
+    "content": "Addressed issues from above pages to make some UI Fixes, that not looking bad. also we fix UX on blow pages.",
+    "author": "@Admin",
+    "category": "Maintenance",
+    "imageUrls": [],
+    "keywords": [
+      "Home",
+      " About",
+      " Update"
+    ],
+    "views": 0,
+    "createdAt": "2025-12-06T00:00:00.000Z"
   }
 ];
 
@@ -50,8 +65,10 @@ function renderUpdates(list) {
     div.innerHTML = `
       <span class="update-badge">${update.category}</span>
       <h3>${update.title}</h3>
-      <small>${new Date(update.createdAt).toLocaleDateString()}</small>
+      <small><b>${update.author}</b> ${new Date(update.createdAt).toLocaleDateString()}</small>
       <p>${update.description}</p>
+      <p>${update.content}</p>
+      <strong>${update.keywords}</strong>
     `;
     container.appendChild(div);
   });
