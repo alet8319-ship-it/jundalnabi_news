@@ -1,13 +1,10 @@
-/* ===== CSS Variables & Theming ===== */
 :root {
-    /* Light Theme (Default) */
     --primary-color: #007aff;
     --primary-hover: #005bb5;
     --bg-body: #f5f7fa;
     --bg-card: #ffffff;
     --bg-nav: #ffffff;
     --bg-secondary: #e1e4e8;
-    /* Loading placeholder */
     --text-main: #1a1a1a;
     --text-muted: #666666;
     --border-color: #e1e4e8;
@@ -26,7 +23,6 @@
     --bg-card: #1e1e1e;
     --bg-nav: #1e1e1e;
     --bg-secondary: #2d2d2d;
-    /* Loading placeholder */
     --text-main: #e0e0e0;
     --text-muted: #a0a0a0;
     --border-color: #333333;
@@ -35,7 +31,6 @@
     --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
 }
 
-/* ===== Reset & Base ===== */
 * {
     margin: 0;
     padding: 0;
@@ -50,7 +45,6 @@ body {
     transition: background-color var(--transition-speed), color var(--transition-speed);
 }
 
-/* ===== Navigation ===== */
 nav {
     height: var(--nav-height);
     width: 100%;
@@ -117,7 +111,6 @@ nav ul li a.active {
     gap: 1rem;
 }
 
-/* Theme Toggle Button */
 .theme-toggle {
     background: none;
     border: none;
@@ -146,7 +139,6 @@ nav #menu_bar {
     border: none;
 }
 
-/* ===== Main Content ===== */
 main {
     margin-top: var(--nav-height);
     padding: 2rem 1.5rem;
@@ -156,7 +148,6 @@ main {
     min-height: calc(100vh - var(--nav-height));
 }
 
-/* ===== Hero Section ===== */
 .hero {
     text-align: center;
     padding: 3rem 1rem;
@@ -178,7 +169,35 @@ main {
     margin: 0 auto;
 }
 
-/* ===== Controls & Filters ===== */
+.hero-typewriter {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.2em;
+    position: relative;
+    padding-right: 0.25rem;
+    white-space: nowrap;
+}
+
+.hero-typewriter::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    width: 2px;
+    height: 100%;
+    background: var(--text-main);
+    animation: caretBlink 1s steps(1) infinite;
+}
+
+@keyframes caretBlink {
+    0%, 49% {
+        opacity: 1;
+    }
+
+    50%, 100% {
+        opacity: 0;
+    }
+}
+
 .news-sort-selector {
     display: flex;
     flex-wrap: wrap;
@@ -212,14 +231,96 @@ main {
     box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.15);
 }
 
-/* ===== News Grid ===== */
 .news-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
     gap: 2rem;
 }
 
-/* ===== News Card ===== */
+.about-section {
+    max-width: 900px;
+    margin: 3rem auto 4rem;
+    padding: 2.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.about-section h2 {
+    font-size: 2.25rem;
+    margin-bottom: 1.5rem;
+    color: var(--text-main);
+    text-align: center;
+}
+
+.about-section p {
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+    line-height: 1.8;
+}
+
+.about-section h3 {
+    font-size: 1.5rem;
+    margin: 2.5rem 0 1rem;
+    color: var(--text-main);
+    position: relative;
+}
+
+.about-section h3::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -0.4rem;
+    width: 48px;
+    height: 3px;
+    background: var(--primary-color);
+    border-radius: 999px;
+}
+
+.about-card {
+    background: var(--bg-body);
+    border-radius: var(--radius-md);
+    padding: 1.75rem 1.75rem 0.2rem 1.75rem;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.about-footer {
+    margin-top: 3rem;
+    text-align: center;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border-color);
+    padding-top: 1.5rem;
+}
+
+.load-more-btn {
+    display: none;
+    margin: 2rem auto 4rem;
+    padding: 0.9rem 2.5rem;
+    border-radius: 999px;
+    border: none;
+    background: var(--primary-color);
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.load-more-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+    background: var(--primary-hover);
+}
+
+.load-more-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.65;
+    box-shadow: none;
+}
+
 .news-card {
     background: var(--bg-card);
     border: 1px solid var(--border-color);
@@ -242,7 +343,6 @@ main {
     height: 200px;
     object-fit: cover;
     background-color: var(--bg-secondary);
-    /* Loading placeholder */
     transition: transform 0.3s ease;
 }
 
@@ -306,15 +406,20 @@ main {
     gap: 0.4rem;
 }
 
-/* ===== Full Article ===== */
 .article-full {
     background: var(--bg-card);
     border-radius: var(--radius-lg);
     padding: 3rem;
     box-shadow: var(--shadow-sm);
-    max-width: 800px;
+    width: 800px;
     margin: 0 auto;
     border: 1px solid var(--border-color);
+}
+
+@media screen and (max-width: 800px) {
+    .article-full {
+        width: 100%;
+    }
 }
 
 .back-btn {
@@ -364,7 +469,6 @@ main {
     margin-bottom: 2.5rem;
     box-shadow: var(--shadow-md);
     background-color: var(--bg-secondary);
-    /* Loading placeholder */
 }
 
 .article-content {
@@ -402,7 +506,6 @@ main {
     border-bottom-color: var(--primary-color);
 }
 
-/* ===== Share Section ===== */
 .share-buttons {
     margin-top: 4rem;
     padding-top: 2rem;
@@ -447,7 +550,6 @@ main {
     transform: translateY(-2px);
 }
 
-/* ===== Loading & Empty States ===== */
 .loading,
 .no-news {
     text-align: center;
@@ -462,8 +564,39 @@ main {
     margin-bottom: 1rem;
     display: block;
 }
+.loading span{
+    font-size: 20px;
+    font-weight: 800;
+    font-family: cursive;
+    color: #706363e2;
+}
+.loading #loading{
+    position: relative;
+    animation: loadDot 1s steps(2) infinite;
+    transition: all 0.7s;
+}
+@keyframes loadDot {
+    0%{
+        left: 0;
+    }
+    20%{
+        left: 5px;
+        opacity: 10;
+    }
+    50%{
+        left: 20px;
+        opacity: 0.01;
+    }
+    70%{
+        right: 10px;
+        opacity: 0.5;
+    }
+    100%{
+        left: 0;
+        opacity: 0;
+    }
+}
 
-/* ===== Toast Notification ===== */
 .toast-container {
     position: fixed;
     bottom: 2rem;
@@ -501,6 +634,13 @@ main {
     color: #ff3b30;
 }
 
+.jundalnabi__tech__main_page__footer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #b1afaf;
+}
+
 @keyframes slideIn {
     from {
         opacity: 0;
@@ -513,7 +653,6 @@ main {
     }
 }
 
-/* ===== Responsive Design ===== */
 @media (max-width: 768px) {
     nav {
         padding: 0 1rem;
@@ -546,6 +685,19 @@ main {
 
     .news-container {
         grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+    }
+
+    .news-sort-selector {
+        margin: 1rem 1rem 1.5rem;
+        position: absolute;
+        padding: 0.5rem;
+        width: 80%;
+        z-index: 2;
+    }
+
+    .about-section {
+        margin: 2rem 1rem 3rem;
+        padding: 1.5rem;
     }
 
     .article-full {

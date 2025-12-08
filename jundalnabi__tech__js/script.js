@@ -1,9 +1,19 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
-import { getFirestore, collection, getDocs, getDoc, doc, orderBy, query, where, updateDoc, increment } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+import {
+    getFirestore,
+    collection,
+    getDocs,
+    getDoc,
+    doc,
+    orderBy,
+    query,
+    where,
+    updateDoc,
+    increment,
+    limit,
+    startAfter
+} from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
 
-/**
- * Configuration & Constants
- */
 const Config = {
     firebase: {
         apiKey: "AIzaSyA1kGDOAuQRqdgXHX3Ugjj_zL7_bqYXos0",
@@ -21,13 +31,20 @@ const Config = {
     placeholders: {
         image: 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22800%22%20height%3D%22400%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20800%20400%22%20preserveAspectRatio%3D%22none%22%3E%3Crect%20width%3D%22800%22%20height%3D%22400%22%20fill%3D%22%23e1e4e8%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23666666%22%3EJundAlNabi%3C%2Ftext%3E%3C%2Fsvg%3E',
         noImage: 'data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%22600%22%20height%3D%22300%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%20600%20300%22%20preserveAspectRatio%3D%22none%22%3E%3Crect%20width%3D%22600%22%20height%3D%22300%22%20fill%3D%22%23e1e4e8%22%2F%3E%3Ctext%20x%3D%2250%25%22%20y%3D%2250%25%22%20dominant-baseline%3D%22middle%22%20text-anchor%3D%22middle%22%20font-family%3D%22sans-serif%22%20font-size%3D%2224%22%20fill%3D%22%23666666%22%3ENo%20Image%3C%2Ftext%3E%3C%2Fsvg%3E'
-    }
+    },
+    pageSize: 12
 };
 
-/**
- * Theme Manager
- * Handles Light/Dark mode toggling and persistence
- */
+
+
+const debounce = (fn, wait = 300) => {
+    let timeout;
+    return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn(...args), wait);
+    };
+};
+
 class ThemeManager {
     constructor() {
         this.themeToggleBtn = document.getElementById('themeToggle');
@@ -66,14 +83,11 @@ class ThemeManager {
     }
 }
 
-/**
- * UI Manager
- * Handles Toast notifications, Loading states, and general UI interactions
- */
 class UIManager {
     constructor() {
         this.loadingEl = document.getElementById('loading');
         this.newsContainer = document.getElementById('newsContainer');
+        this.loadMoreBtn = document.getElementById('loadMoreNews');
         this.toastContainer = this.createToastContainer();
     }
 
@@ -108,19 +122,102 @@ class UIManager {
             this.newsContainer.innerHTML = `<div class="no-news">${message}</div>`;
         }
     }
+
+    clearNews() {
+        if (this.newsContainer) {
+            this.newsContainer.innerHTML = '';
+        }
+    }
+
+    toggleLoadMore(show) {
+        if (!this.loadMoreBtn) return;
+        this.loadMoreBtn.style.display = show ? 'block' : 'none';
+    }
+
+    setLoadMoreState({ disabled = false, label = 'Load more stories' } = {}) {
+        if (!this.loadMoreBtn) return;
+        this.loadMoreBtn.disabled = disabled;
+        this.loadMoreBtn.textContent = label;
+    }
+}
+
+class NewsRepository {
+    constructor(db, pageSize = Config.pageSize) {
+        this.db = db;
+        this.pageSize = pageSize;
+        this.cursors = new Map();
+    }
+
+    buildCacheKey(sortType, category) {
+        return `${sortType || 'latest'}::${category || 'all'}`;
+    }
+
+    resetCursor(sortType, category) {
+        this.cursors.delete(this.buildCacheKey(sortType, category));
+    }
+
+    buildConstraints(sortType, category) {
+        if (sortType === 'category' && category) {
+            return [where('category', '==', category), orderBy('createdAt', 'desc')];
+        }
+        if (sortType === 'featured') {
+            return [orderBy('featured', 'desc'), orderBy('createdAt', 'desc')];
+        }
+        if (sortType === 'popular') {
+            return [orderBy('views', 'desc'), orderBy('createdAt', 'desc')];
+        }
+        return [orderBy('createdAt', 'desc')];
+    }
+
+    async fetchNews({ sortType = 'latest', category = '', reset = false } = {}) {
+        if (reset) {
+            this.resetCursor(sortType, category);
+        }
+
+        const cacheKey = this.buildCacheKey(sortType, category);
+        const cursor = this.cursors.get(cacheKey);
+        const constraints = [...this.buildConstraints(sortType, category), limit(this.pageSize)];
+        if (cursor) {
+            constraints.push(startAfter(cursor));
+        }
+
+        const newsQuery = query(collection(this.db, 'news'), ...constraints);
+        const snapshot = await getDocs(newsQuery);
+
+        if (snapshot.docs.length > 0) {
+            this.cursors.set(cacheKey, snapshot.docs[snapshot.docs.length - 1]);
+        } else {
+            this.cursors.delete(cacheKey);
+        }
+
+        return {
+            items: snapshot.docs.map(docSnap => ({ id: docSnap.id, data: docSnap.data() })),
+            hasMore: snapshot.size === this.pageSize
+        };
+    }
 }
 
 class NewsApp {
     constructor() {
         this.app = initializeApp(Config.firebase);
         this.db = getFirestore(this.app);
+        this.repository = new NewsRepository(this.db);
         this.ui = new UIManager();
         this.themeManager = new ThemeManager();
 
-        // DOM Elements
         this.sortTypeEl = document.getElementById('newsSortType');
         this.categoryInputEl = document.getElementById('newsCategoryInput');
         this.categoryDropdownEl = document.getElementById('newsCategoryDropdown');
+        this.loadMoreBtn = document.getElementById('loadMoreNews');
+
+        this.categoryInputHandler = debounce(() => {
+            if (this.shouldLoadFromInput()) {
+                this.loadNews({ reset: true });
+            }
+        }, 400);
+
+        this.isFetching = false;
+        this.hasMore = true;
 
         this.init();
     }
@@ -133,39 +230,40 @@ class NewsApp {
         const articleId = urlParams.get('id');
 
         if (articleId) {
+            this.ui.toggleLoadMore(false);
             this.loadSingleArticle(articleId);
         } else {
-            this.loadNews();
+            this.loadNews({ reset: true });
         }
     }
 
     setupEventListeners() {
-        // Sort Type Change
         if (this.sortTypeEl) {
             this.sortTypeEl.addEventListener('change', () => {
                 this.handleSortChange();
-                this.loadNews();
+                this.loadNews({ reset: true });
             });
         }
 
-        // Category Dropdown Change
         if (this.categoryDropdownEl) {
             this.categoryDropdownEl.addEventListener('change', () => {
                 this.handleCategoryDropdownChange();
-                this.loadNews();
-            });
-        }
-
-        // Category Input Change
-        if (this.categoryInputEl) {
-            this.categoryInputEl.addEventListener('input', () => {
-                if (this.shouldLoadFromInput()) {
-                    this.loadNews();
+                if (this.sortTypeEl && this.sortTypeEl.value === 'category') {
+                    this.loadNews({ reset: true });
                 }
             });
         }
 
-        // Mobile Menu
+        if (this.categoryInputEl) {
+            this.categoryInputEl.addEventListener('input', () => {
+                this.categoryInputHandler();
+            });
+        }
+
+        if (this.loadMoreBtn) {
+            this.loadMoreBtn.addEventListener('click', () => this.loadNews());
+        }
+
         const menu = document.getElementById('menu_bar');
         const nav = document.getElementById('nav_bar');
         if (menu && nav) {
@@ -193,7 +291,7 @@ class NewsApp {
         const isCategory = this.sortTypeEl.value === 'category';
         if (this.categoryDropdownEl) this.categoryDropdownEl.style.display = isCategory ? '' : 'none';
         if (this.categoryInputEl) {
-            this.categoryInputEl.style.display = 'none'; // Reset input visibility
+            this.categoryInputEl.style.display = 'none';
             this.categoryInputEl.value = '';
         }
         if (isCategory && this.categoryDropdownEl) {
@@ -202,7 +300,7 @@ class NewsApp {
     }
 
     handleCategoryDropdownChange() {
-        const isOther = this.categoryDropdownEl.value === 'Other' || this.categoryDropdownEl.value === "";
+        const isOther = !this.categoryDropdownEl.value || this.categoryDropdownEl.value === 'Other';
         if (this.categoryInputEl) {
             this.categoryInputEl.style.display = isOther ? '' : 'none';
             if (!isOther) this.categoryInputEl.value = '';
@@ -211,59 +309,68 @@ class NewsApp {
 
     shouldLoadFromInput() {
         return (this.sortTypeEl && this.sortTypeEl.value === 'category') &&
-            (this.categoryDropdownEl && (this.categoryDropdownEl.value === 'Other' || this.categoryDropdownEl.value === ""));
+            (this.categoryDropdownEl && (!this.categoryDropdownEl.value || this.categoryDropdownEl.value === 'Other')) &&
+            this.categoryInputEl &&
+            this.categoryInputEl.value.trim().length >= 2;
     }
 
-    async loadNews() {
-        this.ui.showLoading(true);
-        if (this.ui.newsContainer) this.ui.newsContainer.innerHTML = '';
+    getActiveCategory() {
+        if (!this.sortTypeEl || this.sortTypeEl.value !== 'category') return '';
+        if (this.categoryDropdownEl && this.categoryDropdownEl.value && this.categoryDropdownEl.value !== 'Other') {
+            return this.categoryDropdownEl.value;
+        }
+        return this.categoryInputEl ? this.categoryInputEl.value.trim() : '';
+    }
+
+    async loadNews({ reset = false } = {}) {
+        if (this.isFetching) return;
+
+        if (reset) {
+            this.hasMore = true;
+            this.ui.clearNews();
+        }
+
+        if (!this.hasMore && !reset) {
+            return;
+        }
+
+        const sortType = this.sortTypeEl ? this.sortTypeEl.value : 'latest';
+        const category = this.getActiveCategory();
+
+        this.isFetching = true;
+        if (reset) {
+            this.ui.showLoading(true);
+        } else {
+            this.ui.setLoadMoreState({ disabled: true, label: 'Loading...' });
+        }
 
         try {
-            const newsQuery = this.buildQuery();
-            const querySnapshot = await getDocs(newsQuery);
+            const { items, hasMore } = await this.repository.fetchNews({ sortType, category, reset });
 
-            this.ui.showLoading(false);
-
-            if (querySnapshot.empty) {
+            if (items.length === 0 && reset) {
                 this.ui.renderError('No articles found.');
-                return;
+                this.ui.toggleLoadMore(false);
+            } else {
+                const fragment = document.createDocumentFragment();
+                items.forEach(({ id, data }) => fragment.appendChild(this.createNewsCard(id, data)));
+                if (this.ui.newsContainer) {
+                    this.ui.newsContainer.appendChild(fragment);
+                }
+                this.hasMore = hasMore;
+                this.ui.toggleLoadMore(hasMore);
+                if (hasMore) {
+                    this.ui.setLoadMoreState({ disabled: false, label: 'Load more stories' });
+                }
             }
-
-            querySnapshot.forEach((docSnap) => {
-                const news = docSnap.data();
-                this.ui.newsContainer.appendChild(this.createNewsCard(docSnap.id, news));
-            });
-
         } catch (error) {
             console.error('Error loading news:', error);
-            this.ui.showLoading(false);
             this.ui.renderError('Failed to load news. Please try again later.');
+            this.ui.showToast('Failed to load news', 'error');
+            this.ui.toggleLoadMore(false);
+        } finally {
+            this.ui.showLoading(false);
+            this.isFetching = false;
         }
-    }
-
-    buildQuery() {
-        const sortType = this.sortTypeEl ? this.sortTypeEl.value : 'latest';
-        let q = collection(this.db, 'news');
-
-        if (sortType === 'category') {
-            let category = "";
-            if (this.categoryDropdownEl && this.categoryDropdownEl.value &&
-                this.categoryDropdownEl.value !== "" && this.categoryDropdownEl.value !== "Other") {
-                category = this.categoryDropdownEl.value;
-            } else if (this.categoryInputEl) {
-                category = this.categoryInputEl.value.trim();
-            }
-
-            if (category) {
-                return query(q, where('category', '==', category), orderBy('createdAt', 'desc'));
-            }
-        } else if (sortType === 'featured') {
-            return query(q, orderBy('featured', 'desc'), orderBy('createdAt', 'desc'));
-        } else if (sortType === 'popular') {
-            return query(q, orderBy('views', 'desc'), orderBy('createdAt', 'desc'));
-        }
-
-        return query(q, orderBy('createdAt', 'desc'));
     }
 
     async loadSingleArticle(id) {
@@ -273,7 +380,6 @@ class NewsApp {
             const docSnap = await getDoc(docRef);
 
             if (docSnap.exists()) {
-                // Increment views
                 updateDoc(docRef, { views: increment(1) }).catch(console.error);
 
                 const news = docSnap.data();
@@ -283,8 +389,8 @@ class NewsApp {
                     this.ui.newsContainer.innerHTML = this.createArticleView(news);
                 }
 
-                this.updatePageMeta(news, id);
-                this.addStructuredData(news, id);
+                this.updatePageMeta(news);
+                this.addStructuredData(news);
             } else {
                 this.ui.showLoading(false);
                 this.ui.renderError('Article not found.');
@@ -297,7 +403,7 @@ class NewsApp {
     }
 
     createNewsCard(id, news) {
-        const imageUrl = this.getImageUrl(news, 'card');
+        const imageUrl = this.getImageUrl(news);
         const date = this.formatDate(news.createdAt);
         const description = this.getCardDescription(news);
         const categoryBadge = news.category ? `<span class="category-badge">${news.category}</span>` : '';
@@ -326,7 +432,7 @@ class NewsApp {
     createArticleView(news) {
         const date = this.formatDate(news.createdAt, true);
         const formattedContent = this.formatContent(news.content);
-        const imageUrl = this.getImageUrl(news, 'full');
+        const imageUrl = this.getImageUrl(news);
         const categoryBadge = news.category ? `<span class="category-badge">${news.category}</span>` : '';
 
         return `
@@ -363,8 +469,7 @@ class NewsApp {
         `;
     }
 
-    getImageUrl(news, type) {
-        // 1. Check for array of images (common in some CMS)
+    getImageUrl(news) {
         if (Array.isArray(news.imageUrls) && news.imageUrls.length > 0) {
             const validImg = news.imageUrls.find(item => {
                 if (typeof item === 'string' && item.trim().length > 0) return true;
@@ -377,24 +482,19 @@ class NewsApp {
             }
         }
 
-        // 2. Check if imageUrls is a string (legacy/error case)
         if (typeof news.imageUrls === 'string' && news.imageUrls.trim().length > 0) {
             return news.imageUrls;
         }
 
-        // 3. Check for common image field names
         const possibleKeys = [
             'imageUrl', 'image', 'img', 'photo', 'thumbnail',
             'cover', 'coverImage', 'urlToImage', 'media', 'banner'
         ];
 
-        // Find the first key that exists and has a valid value
         const foundKey = possibleKeys.find(k => {
             const val = news[k];
             if (!val) return false;
-            // Check if it's a direct string URL
             if (typeof val === 'string' && val.trim().length > 0) return true;
-            // Check if it's an object with a 'url' or 'src' property (e.g. Firebase Storage object)
             if (typeof val === 'object') {
                 return (val.url && typeof val.url === 'string') ||
                     (val.src && typeof val.src === 'string');
@@ -404,25 +504,26 @@ class NewsApp {
 
         if (foundKey) {
             const val = news[foundKey];
-            let result;
-            if (typeof val === 'string') result = val;
-            if (typeof val === 'object') result = val.url || val.src;
-            return result;
+            if (typeof val === 'string') return val;
+            if (typeof val === 'object') return val.url || val.src;
         }
 
-        // 4. Fallback
         return Config.placeholders.image;
     }
 
     formatDate(timestamp, full = false) {
         if (!timestamp) return 'No date';
-        const date = new Date(timestamp.seconds * 1000);
-
-        if (full) {
-            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        let date;
+        if (timestamp.seconds) {
+            date = new Date(timestamp.seconds * 1000);
+        } else {
+            date = new Date(timestamp);
         }
 
-        // Relative time for cards
+        if (full) {
+            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+        }
+
         const now = new Date();
         const diff = now - date;
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -434,202 +535,7 @@ class NewsApp {
     }
 
     formatContent(content = '') {
-        return content
-            .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-            .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-            .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\*(.+?)\*/g, '<em>$1</em>')
-
-        if (sortType === 'category') {
-            let category = "";
-            if (this.categoryDropdownEl && this.categoryDropdownEl.value &&
-                this.categoryDropdownEl.value !== "" && this.categoryDropdownEl.value !== "Other") {
-                category = this.categoryDropdownEl.value;
-            } else if (this.categoryInputEl) {
-                category = this.categoryInputEl.value.trim();
-            }
-
-            if (category) {
-                return query(q, where('category', '==', category), orderBy('createdAt', 'desc'));
-            }
-        } else if (sortType === 'featured') {
-            return query(q, orderBy('featured', 'desc'), orderBy('createdAt', 'desc'));
-        } else if (sortType === 'popular') {
-            return query(q, orderBy('views', 'desc'), orderBy('createdAt', 'desc'));
-        }
-
-        return query(q, orderBy('createdAt', 'desc'));
-    }
-
-    async loadSingleArticle(id) {
-        this.ui.showLoading(true);
-        try {
-            const docRef = doc(this.db, 'news', id);
-            const docSnap = await getDoc(docRef);
-
-            if (docSnap.exists()) {
-                // Increment views
-                updateDoc(docRef, { views: increment(1) }).catch(console.error);
-
-                const news = docSnap.data();
-                this.ui.showLoading(false);
-
-                if (this.ui.newsContainer) {
-                    this.ui.newsContainer.innerHTML = this.createArticleView(news);
-                }
-
-                this.updatePageMeta(news, id);
-                this.addStructuredData(news, id);
-            } else {
-                this.ui.showLoading(false);
-                this.ui.renderError('Article not found.');
-            }
-        } catch (error) {
-            console.error('Error loading article:', error);
-            this.ui.showLoading(false);
-            this.ui.renderError('Error loading article.');
-        }
-    }
-
-    createNewsCard(id, news) {
-        const imageUrl = this.getImageUrl(news, 'card');
-        const date = this.formatDate(news.createdAt);
-        const description = this.getCardDescription(news);
-        const categoryBadge = news.category ? `<span class="category-badge">${news.category}</span>` : '';
-
-        const card = document.createElement('div');
-        card.className = 'news-card';
-        card.addEventListener('click', () => (window.location.href = `index.html?id=${id}`));
-
-        card.innerHTML = `
-            <img src="${imageUrl}" alt="${news.title}" loading="lazy"
-                 onerror="this.onerror=null; this.src='${Config.placeholders.noImage}'">
-            <div class="news-card-content">
-                ${categoryBadge}
-                <h3>${news.title}</h3>
-                <p class="news-description">${description}</p>
-                <div class="news-meta">
-                    <span><i class="fa-solid fa-user"></i> ${news.author || 'Admin'}</span>
-                    <span><i class="fa-regular fa-calendar"></i> ${date}</span>
-                    <span><i class="fa-regular fa-eye"></i> ${news.views || 0}</span>
-                </div>
-            </div>
-        `;
-        return card;
-    }
-
-    createArticleView(news) {
-        const date = this.formatDate(news.createdAt, true);
-        const formattedContent = this.formatContent(news.content);
-        const imageUrl = this.getImageUrl(news, 'full');
-        const categoryBadge = news.category ? `<span class="category-badge">${news.category}</span>` : '';
-
-        return `
-            <div class="article-full">
-                <button class="back-btn" onclick="window.location.href='index.html'">
-                    <i class="fa-solid fa-arrow-left"></i> Back to News
-                </button>
-                
-                <div class="article-header">
-                    ${categoryBadge}
-                    <h1>${news.title}</h1>
-                    <div class="article-meta">
-                        <span><i class="fa-solid fa-user"></i> ${news.author || 'Admin'}</span>
-                        <span><i class="fa-regular fa-calendar"></i> ${date}</span>
-                        <span><i class="fa-regular fa-eye"></i> ${news.views || 0} views</span>
-                    </div>
-                </div>
-
-                <img src="${imageUrl}" alt="${news.title}" class="article-image" 
-                     onerror="this.onerror=null; this.src='${Config.placeholders.noImage}'">
-                
-                <div class="article-content">${formattedContent}</div>
-                
-                <div class="share-buttons">
-                    <h4>Share this article</h4>
-                    <div class="share-icons">
-                        <button onclick="window.newsApp.share('facebook')" class="share-btn"><i class="fa-brands fa-facebook-f"></i></button>
-                        <button onclick="window.newsApp.share('twitter')" class="share-btn"><i class="fa-brands fa-twitter"></i></button>
-                        <button onclick="window.newsApp.share('whatsapp')" class="share-btn"><i class="fa-brands fa-whatsapp"></i></button>
-                        <button onclick="window.newsApp.share('copy')" class="share-btn"><i class="fa-solid fa-link"></i></button>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    getImageUrl(news, type) {
-        // 1. Check for array of images (common in some CMS)
-        if (Array.isArray(news.imageUrls) && news.imageUrls.length > 0) {
-            const validImg = news.imageUrls.find(item => {
-                if (typeof item === 'string' && item.trim().length > 0) return true;
-                if (typeof item === 'object' && (item.url || item.src)) return true;
-                return false;
-            });
-            if (validImg) {
-                if (typeof validImg === 'string') return validImg;
-                return validImg.url || validImg.src;
-            }
-        }
-
-        // 2. Check if imageUrls is a string (legacy/error case)
-        if (typeof news.imageUrls === 'string' && news.imageUrls.trim().length > 0) {
-            return news.imageUrls;
-        }
-
-        // 3. Check for common image field names
-        const possibleKeys = [
-            'imageUrl', 'image', 'img', 'photo', 'thumbnail',
-            'cover', 'coverImage', 'urlToImage', 'media', 'banner'
-        ];
-
-        // Find the first key that exists and has a valid value
-        const foundKey = possibleKeys.find(k => {
-            const val = news[k];
-            if (!val) return false;
-            // Check if it's a direct string URL
-            if (typeof val === 'string' && val.trim().length > 0) return true;
-            // Check if it's an object with a 'url' or 'src' property (e.g. Firebase Storage object)
-            if (typeof val === 'object') {
-                return (val.url && typeof val.url === 'string') ||
-                    (val.src && typeof val.src === 'string');
-            }
-            return false;
-        });
-
-        if (foundKey) {
-            const val = news[foundKey];
-            let result;
-            if (typeof val === 'string') result = val;
-            if (typeof val === 'object') result = val.url || val.src;
-            return result;
-        }
-
-        // 4. Fallback
-        return Config.placeholders.image;
-    }
-
-    formatDate(timestamp, full = false) {
-        if (!timestamp) return 'No date';
-        const date = new Date(timestamp.seconds * 1000);
-
-        if (full) {
-            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-        }
-
-        // Relative time for cards
-        const now = new Date();
-        const diff = now - date;
-        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-        if (days === 0) return 'Today';
-        if (days === 1) return 'Yesterday';
-        if (days < 7) return `${days} days ago`;
-        return date.toLocaleDateString();
-    }
-
-    formatContent(content = '') {
-        return content
+        return (content || '')
             .replace(/^## (.+)$/gm, '<h2>$1</h2>')
             .replace(/^### (.+)$/gm, '<h3>$1</h3>')
             .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
@@ -646,17 +552,15 @@ class NewsApp {
         return (div.textContent || div.innerText || '').substring(0, 160) + '...';
     }
 
-    updatePageMeta(news, id) {
+    updatePageMeta(news) {
         const title = `${news.title} - JundAlNabi`;
         const description = this.getCardDescription(news);
-        const imageUrl = this.getImageUrl(news, 'full');
+        const imageUrl = this.getImageUrl(news);
         const url = window.location.href;
-        const keywords = this.generateKeywords(news.title + ' ' + news.content);
+        const keywords = this.generateKeywords(`${news.title} ${news.content || ''}`);
 
-        // Update Title
         document.title = title;
 
-        // Update Meta Tags
         const metaTags = {
             'description': description,
             'keywords': keywords,
@@ -672,7 +576,6 @@ class NewsApp {
         };
 
         for (const [name, content] of Object.entries(metaTags)) {
-            // Check for name or property
             let element = document.querySelector(`meta[name="${name}"]`) || document.querySelector(`meta[property="${name}"]`);
             if (!element) {
                 element = document.createElement('meta');
@@ -686,7 +589,6 @@ class NewsApp {
             element.setAttribute('content', content);
         }
 
-        // Update Canonical
         let canonical = document.querySelector('link[rel="canonical"]');
         if (!canonical) {
             canonical = document.createElement('link');
@@ -696,10 +598,12 @@ class NewsApp {
         canonical.setAttribute('href', url);
     }
 
-    addStructuredData(news, id) {
-        const imageUrl = this.getImageUrl(news, 'full');
-        const datePublished = new Date(news.createdAt.seconds * 1000).toISOString();
-        const dateModified = new Date().toISOString(); // Ideally this should come from DB if available
+    addStructuredData(news) {
+        const imageUrl = this.getImageUrl(news);
+        const datePublished = news.createdAt && news.createdAt.seconds
+            ? new Date(news.createdAt.seconds * 1000).toISOString()
+            : new Date().toISOString();
+        const dateModified = new Date().toISOString();
 
         const schema = {
             "@context": "https://schema.org",
@@ -710,7 +614,7 @@ class NewsApp {
             "dateModified": dateModified,
             "author": [{
                 "@type": "Person",
-                "name": news.author || "JundAlNabi Team",
+                "name": news.author || "Team JundAlNabi",
                 "url": "https://www.codetoweb.tech/"
             }],
             "publisher": {
@@ -770,5 +674,60 @@ class NewsApp {
     }
 }
 
-// Initialize App
+class HeroTypewriter {
+    constructor(element) {
+        if (!element) return;
+        this.element = element;
+        this.phrases = this.getPhrases(element);
+        this.typingSpeed = 90;
+        this.eraseSpeed = 45;
+        this.pauseDuration = 1500;
+        this.loopIndex = 0;
+        this.charIndex = 0;
+        this.isDeleting = false;
+        this.tick();
+    }
+
+    getPhrases(element) {
+        const dataset = element.dataset.phrases;
+        if (dataset) {
+            try {
+                const parsed = JSON.parse(dataset);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    return parsed;
+                }
+            } catch (error) {
+                console.warn('Invalid hero phrases JSON', error);
+            }
+        }
+        return [element.textContent.trim() || 'Latest News & Updates - JundAlNabi'];
+    }
+
+    tick() {
+        const phrase = this.phrases[this.loopIndex % this.phrases.length];
+        if (this.isDeleting) {
+            this.charIndex = Math.max(0, this.charIndex - 1);
+        } else {
+            this.charIndex = Math.min(phrase.length, this.charIndex + 1);
+        }
+
+        this.element.textContent = phrase.substring(0, this.charIndex);
+
+        let delta = this.isDeleting ? this.eraseSpeed : this.typingSpeed;
+
+        if (!this.isDeleting && this.charIndex === phrase.length) {
+            delta = this.pauseDuration;
+            this.isDeleting = true;
+        } else if (this.isDeleting && this.charIndex === 0) {
+            this.isDeleting = false;
+            this.loopIndex++;
+            delta = 400;
+        }
+
+        setTimeout(() => this.tick(), delta);
+    }
+}
+
 window.newsApp = new NewsApp();
+window.heroTypewriter = new HeroTypewriter(document.querySelector('.hero-typewriter'));
+

@@ -5,27 +5,21 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Latest News Updates - JundAlNabi</title>
-
-  <!-- SEO -->
   <meta name="description"
     content="Read the latest verified news, updates, and reports. Updated daily with fresh content.">
   <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://yourwebsite.com/updates.html">
-
-  <!-- Open Graph -->
+  <link rel="canonical" href="https://codetoweb.tech/updates.html">
   <meta property="og:title" content="Latest News Updates">
   <meta property="og:description" content="Fresh and updated news articles.">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="https://yourwebsite.com/logo.png">
-
-  <!-- CSS -->
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="updates.css">
+  <meta property="og:image" content="https://codetoweb.tech/logo/logo.ico">
+  <link rel="stylesheet" href="jundalnabi__style__css/style.css">
+  <link rel="stylesheet" href="jundalnabi__style__css/updates.css">
+  <link rel="shortcut icon" href="logo/logo.ico" type="image/x-icon">
   <script src="https://kit.fontawesome.com/a2e0f1f5d4.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
-
   <header>
     <nav>
       <a href="index.html" class="logo">
@@ -37,6 +31,7 @@
         <li><a href="about.html">About</a></li>
         <li><a href="updates.html" class="active">Updates</a></li>
         <li><a href="contact.html">Contact</a></li>
+        <li><a href="settings.html">Settings</a></li>
       </ul>
       <div class="nav-actions">
         <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
@@ -52,23 +47,25 @@
   <main>
     <section class="hero">
       <h2>Latest News Updates</h2>
-      <p>Freshly updated news from trusted sources.</p>
+      <p>New Updates About website what make optimize application fast</p>
     </section>
 
-    <div class="news-sort-selector">
-      <select id="sortSelect">
-        <option value="latest">Sort by: Latest</option>
-        <option value="oldest">Oldest</option>
-      </select>
-      <input type="text" id="searchInput" placeholder="Search updates...">
-    </div>
+    <section class="updates-wrapper">
+      <div class="news-sort-selector">
+        <select id="sortSelect">
+          <option value="latest">Sort by: Latest</option>
+          <option value="oldest">Oldest</option>
+        </select>
+        <input type="text" id="searchInput" placeholder="Search updates...">
+      </div>
 
-    <div id="updatesContainer" class="news-container"></div>
-    <p id="loadingMsg">Loading updates...</p>
+      <div id="updatesContainer" class="updates-list"></div>
+      <p id="loadingMsg" class="updates-loading">Loading updates...</p>
+    </section>
   </main>
 
-  <script src="script.js" type="module"></script>
-  <script src="updates.js"></script>
+  <script src="jundalnabi__tech__js/script.js" type="module"></script>
+  <script src="jundalnabi__tech__js/updates.js"></script>
 </body>
 
 </html>
