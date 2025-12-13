@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JundAlNabi - Breaking News, Updates & Trusted Insights</title>
+  <meta name="description"
+    content="JundAlNabi delivers breaking news, trusted insights, and latest updates across World, Pakistan, Technology, Religion, Health, Finance, and more.">
+  <meta name="keywords"
+    content="news, updates, latest news, Pakistan news, technology, religion, health, finance, sports, education, stories">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://www.codetoweb.tech/" />
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.codetoweb.tech/" />
+  <meta property="og:title" content="JundAlNabi - Breaking News, Updates & Trusted Insights" />
+  <meta property="og:description"
+    content="Stay informed with the latest news, stories, and updates from around the world." />
+  <meta property="og:image" content="https://www.codetoweb.tech/logo/logo.png" />
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:title" content="JundAlNabi - Breaking News, Updates & Trusted Insights" />
+  <meta property="twitter:description"
+    content="Stay informed with the latest news, stories, and updates from around the world." />
+  <meta property="twitter:image" content="https://www.codetoweb.tech/logo/logo.png" />
+  <meta name="twitter:site" content="@TahaAle7" />
+  <meta name="twitter:creator" content="@TahaAle7" />
+  <meta name="google-site-verification" content="y8soujAfiVOxgpv8d015zmpAYej7kk7nFdfyYz3Ab1c" />
+  <link rel="shortcut icon" href="logo/logo.ico" type="image/x-icon" />
+  <link rel="stylesheet" href="jundalnabi__style__css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "NewsMediaOrganization",
+    "name": "JundAlNabi",
+    "url": "https://www.codetoweb.tech/",
+    "logo": "https://www.codetoweb.tech/logo/logo.png",
+    "sameAs": [
+      "https://x.com/TahaAle7",
+      "https://www.facebook.com/profile.php?id=61570501762322",
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo">
+        <img src="logo/logo.png" alt="JundAlNabi Logo" loading="lazy" />
+        <h1>JundAlNabi</h1>
+      </a>
+
+      <ul id="nav_bar">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="updates.html">Updates</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="settings.html">Settings</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <button id="menu_bar" aria-label="Menu">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <section class="news-sort-selector">
+    <label for="newsSortType" class="visually-hidden">Sort news by</label>
+    <select id="newsSortType">
+      <option value="latest">Latest</option>
+      <option value="featured">Featured First</option>
+      <option value="popular">Popular</option>
+      <option value="category">Category</option>
+    </select>
+
+    <select id="newsCategoryDropdown" style="display:none;">
+      <option value="">-- Choose Category --</option>
+      <option value="World">World</option>
+      <option value="Pakistan">Pakistan</option>
+      <option value="Technology">Technology</option>
+      <option value="Religion">Religion</option>
+      <option value="Health">Health</option>
+      <option value="Finance">Finance</option>
+      <option value="Opinion">Opinion</option>
+      <option value="Education">Education</option>
+      <option value="Sports">Sports</option>
+      <option value="Other">Other</option>
+    </select>
+
+    <input type="text" id="newsCategoryInput" placeholder="Or type category..." style="display:none;" autocomplete="off"
+      aria-label="Category name" />
+  </section>
+
+  <main>
+    <section class="hero">
+      <h1>
+        Latest News & Updates -
+        <span class="hero-typewriter" data-phrases='["JundAlNabi","Stories","Trusted insights"]'></span>
+      </h1>
+      <p>Stay informed with the latest stories and articles from around the world.</p>
+    </section>
+
+    <section id="newsSection" class="news-section">
+      <div id="loading" class="loading" aria-live="polite">
+        <i class="fa-solid fa-spinner fa-spin"></i> <span>Waiting for your network<span
+            id="loadingDots">...</span></span>
+      </div>
+      <div id="newsContainer" class="news-container">
+        <!-- Example article structure for SEO -->
+        <!--
+        <article class="news-item">
+          <h2>Sample News Title</h2>
+          <p>Short summary of the news for SEO and indexing...</p>
+          <a href="news-detail.html">Read more</a>
+        </article>
+        -->
+      </div>
+      <button id="loadMoreNews" class="load-more-btn" aria-live="polite">Load more stories</button>
+    </section>
+  </main>
+
+  <footer class="jundalnabi__tech__main_page__footer">
+    © 2025 JundAlNabi. All Rights Reserved.
+  </footer>
+
+  <script src="jundalnabi__tech__js/script.js" type="module"></script>
+</body>
+
+</html>
