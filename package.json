@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "@clerk/clerk-js": "^5.113.0",
-    "dotenv": "^17.2.3",
-    "openai": "^6.10.0"
-  }
-}
