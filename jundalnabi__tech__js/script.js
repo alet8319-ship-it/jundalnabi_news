@@ -35,8 +35,6 @@ const Config = {
     pageSize: 12
 };
 
-
-
 const debounce = (fn, wait = 300) => {
     let timeout;
     return (...args) => {
@@ -109,6 +107,10 @@ class UIManager {
             <span>${message}</span>
         `;
         this.toastContainer.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.remove();
+        }, 5000);
     }
 
     showLoading(show) {
@@ -158,7 +160,8 @@ class NewsRepository {
 
     buildConstraints(sortType, category) {
         if (sortType === 'category' && category) {
-            return [where('category', '==', category), orderBy('createdAt', 'desc')];
+            // Simple category filter without orderBy to avoid index requirement
+            return [where('category', '==', category)];
         }
         if (sortType === 'featured') {
             return [orderBy('featured', 'desc'), orderBy('createdAt', 'desc')];
@@ -181,19 +184,84 @@ class NewsRepository {
             constraints.push(startAfter(cursor));
         }
 
-        const newsQuery = query(collection(this.db, 'news'), ...constraints);
-        const snapshot = await getDocs(newsQuery);
+        try {
+            const newsQuery = query(collection(this.db, 'news'), ...constraints);
+            const snapshot = await getDocs(newsQuery);
 
-        if (snapshot.docs.length > 0) {
-            this.cursors.set(cacheKey, snapshot.docs[snapshot.docs.length - 1]);
-        } else {
-            this.cursors.delete(cacheKey);
+            // If category query returns empty, try case variations
+            if (snapshot.docs.length === 0 && sortType === 'category' && category && reset) {
+                console.log(`No results for category: "${category}", trying case variations...`);
+                
+                // Try lowercase
+                const lowerQuery = query(
+                    collection(this.db, 'news'), 
+                    where('category', '==', category.toLowerCase()),
+                    limit(this.pageSize)
+                );
+                const lowerSnapshot = await getDocs(lowerQuery);
+                
+                if (lowerSnapshot.docs.length > 0) {
+                    console.log(`Found results with lowercase: "${category.toLowerCase()}"`);
+                    if (lowerSnapshot.docs.length > 0) {
+                        this.cursors.set(cacheKey, lowerSnapshot.docs[lowerSnapshot.docs.length - 1]);
+                    }
+                    return {
+                        items: lowerSnapshot.docs.map(docSnap => ({ id: docSnap.id, data: docSnap.data() })),
+                        hasMore: lowerSnapshot.size === this.pageSize
+                    };
+                }
+                
+                // Try uppercase
+                const upperQuery = query(
+                    collection(this.db, 'news'), 
+                    where('category', '==', category.toUpperCase()),
+                    limit(this.pageSize)
+                );
+                const upperSnapshot = await getDocs(upperQuery);
+                
+                if (upperSnapshot.docs.length > 0) {
+                    console.log(`Found results with uppercase: "${category.toUpperCase()}"`);
+                    if (upperSnapshot.docs.length > 0) {
+                        this.cursors.set(cacheKey, upperSnapshot.docs[upperSnapshot.docs.length - 1]);
+                    }
+                    return {
+                        items: upperSnapshot.docs.map(docSnap => ({ id: docSnap.id, data: docSnap.data() })),
+                        hasMore: upperSnapshot.size === this.pageSize
+                    };
+                }
+            }
+
+            // Sort by createdAt client-side for category queries
+            let docs = snapshot.docs;
+            if (sortType === 'category' && category) {
+                docs = docs.sort((a, b) => {
+                    const aTime = a.data().createdAt?.seconds || 0;
+                    const bTime = b.data().createdAt?.seconds || 0;
+                    return bTime - aTime; // Descending order
+                });
+            }
+
+            if (docs.length > 0) {
+                this.cursors.set(cacheKey, docs[docs.length - 1]);
+            } else {
+                this.cursors.delete(cacheKey);
+            }
+
+            return {
+                items: docs.map(docSnap => ({ id: docSnap.id, data: docSnap.data() })),
+                hasMore: docs.length === this.pageSize
+            };
+        } catch (error) {
+            console.error('Firestore query error:', error);
+            console.error('Error details:', {
+                code: error.code,
+                message: error.message,
+                sortType,
+                category
+            });
+            
+            throw error;
         }
-
-        return {
-            items: snapshot.docs.map(docSnap => ({ id: docSnap.id, data: docSnap.data() })),
-            hasMore: snapshot.size === this.pageSize
-        };
     }
 }
 
@@ -241,7 +309,9 @@ class NewsApp {
         if (this.sortTypeEl) {
             this.sortTypeEl.addEventListener('change', () => {
                 this.handleSortChange();
-                this.loadNews({ reset: true });
+                if (this.sortTypeEl.value !== 'category' || this.getActiveCategory()) {
+                    this.loadNews({ reset: true });
+                }
             });
         }
 
@@ -249,7 +319,10 @@ class NewsApp {
             this.categoryDropdownEl.addEventListener('change', () => {
                 this.handleCategoryDropdownChange();
                 if (this.sortTypeEl && this.sortTypeEl.value === 'category') {
-                    this.loadNews({ reset: true });
+                    const category = this.getActiveCategory();
+                    if (category || (this.categoryDropdownEl.value && this.categoryDropdownEl.value !== 'Other')) {
+                        this.loadNews({ reset: true });
+                    }
                 }
             });
         }
@@ -289,13 +362,21 @@ class NewsApp {
 
     handleSortChange() {
         const isCategory = this.sortTypeEl.value === 'category';
-        if (this.categoryDropdownEl) this.categoryDropdownEl.style.display = isCategory ? '' : 'none';
+        if (this.categoryDropdownEl) {
+            this.categoryDropdownEl.style.display = isCategory ? '' : 'none';
+        }
         if (this.categoryInputEl) {
             this.categoryInputEl.style.display = 'none';
             this.categoryInputEl.value = '';
         }
+        
         if (isCategory && this.categoryDropdownEl) {
             this.categoryDropdownEl.value = "";
+        }
+        
+        if (isCategory) {
+            this.ui.clearNews();
+            this.ui.renderError('Please select a category to view news.');
         }
     }
 
@@ -336,6 +417,12 @@ class NewsApp {
 
         const sortType = this.sortTypeEl ? this.sortTypeEl.value : 'latest';
         const category = this.getActiveCategory();
+        
+        if (sortType === 'category' && !category) {
+            this.ui.renderError('Please select or enter a category to view news.');
+            this.ui.toggleLoadMore(false);
+            return;
+        }
 
         this.isFetching = true;
         if (reset) {
@@ -348,7 +435,10 @@ class NewsApp {
             const { items, hasMore } = await this.repository.fetchNews({ sortType, category, reset });
 
             if (items.length === 0 && reset) {
-                this.ui.renderError('No articles found.');
+                const message = sortType === 'category' 
+                    ? `No articles found in category "${category}". Try checking the spelling or choose a different category.` 
+                    : 'No articles found.';
+                this.ui.renderError(message);
                 this.ui.toggleLoadMore(false);
             } else {
                 const fragment = document.createDocumentFragment();
@@ -364,8 +454,21 @@ class NewsApp {
             }
         } catch (error) {
             console.error('Error loading news:', error);
-            this.ui.renderError('Failed to load news. Please try again later.');
-            this.ui.showToast('Failed to load news', 'error');
+            
+            let errorMessage = 'Failed to load news. ';
+            
+            if (error.message && error.message.includes('index')) {
+                errorMessage = 'Database index required. Please contact the administrator to set up category filtering.';
+                console.error('FIRESTORE INDEX NEEDED: Go to Firebase Console → Firestore → Indexes');
+                console.error('Create composite index: collection=news, fields: category (Ascending), createdAt (Descending)');
+            } else if (error.code === 'permission-denied') {
+                errorMessage = 'Permission denied. Please check your authentication.';
+            } else {
+                errorMessage += 'Please try again later or contact support.';
+            }
+            
+            this.ui.renderError(errorMessage);
+            this.ui.showToast(errorMessage, 'error');
             this.ui.toggleLoadMore(false);
         } finally {
             this.ui.showLoading(false);
@@ -730,4 +833,3 @@ class HeroTypewriter {
 
 window.newsApp = new NewsApp();
 window.heroTypewriter = new HeroTypewriter(document.querySelector('.hero-typewriter'));
-

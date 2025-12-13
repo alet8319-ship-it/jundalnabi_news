@@ -131,28 +131,6 @@
   </footer>
 
   <script src="jundalnabi__tech__js/script.js" type="module"></script>
-
-  <script>
-    const sortTypeEl = document.getElementById('newsSortType');
-    const categoryDropdown = document.getElementById('newsCategoryDropdown');
-    const categoryInput = document.getElementById('newsCategoryInput');
-
-    function updateCategoryDisplay() {
-      if (sortTypeEl.value === 'category') {
-        categoryDropdown.style.display = 'inline-block';
-        categoryInput.style.display = (categoryDropdown.value === 'Other' || categoryDropdown.value === '') ? 'inline-block' : 'none';
-      } else {
-        categoryDropdown.style.display = 'none';
-        categoryInput.style.display = 'none';
-        categoryDropdown.value = '';
-        categoryInput.value = '';
-      }
-    }
-
-    sortTypeEl.addEventListener('change', updateCategoryDisplay);
-    categoryDropdown.addEventListener('change', updateCategoryDisplay);
-    updateCategoryDisplay();
-  </script>
 </body>
 
 </html>
